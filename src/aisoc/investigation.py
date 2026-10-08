@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import math
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timedelta
 
 from aisoc import attack, intel
@@ -214,6 +214,9 @@ def investigate(store: TenantStore, inc: Incident, audit: AuditLog, incidents: d
         "external_ips": sorted(n for n, k in inv.nodes.items() if k == "ip" and n not in benign_ips),
         "destinations": sorted(n for n, k in inv.nodes.items() if k in ("destination", "domain")),
     }
+    # number evidence in time order so EV-001 is the earliest event
+    order = sorted(inv.evidence, key=lambda e: (e.time, e.event_id))
+    inv.evidence = [replace(e, id=f"EV-{n:03d}") for n, e in enumerate(order, 1)]
     users = store.users()
     inv.blast_radius = {
         "privileged_accounts": [a for a in inv.scope["accounts"] if users.get(a, {}).get("IsPrivileged")],
