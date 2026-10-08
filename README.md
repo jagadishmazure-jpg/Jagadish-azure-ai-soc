@@ -159,6 +159,17 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
   [docs/mssp-operating-model.md](docs/mssp-operating-model.md) and [docs/deployment.md](docs/deployment.md).
 - **Interview prep:** [docs/interview-guide.md](docs/interview-guide.md).
 
+## Independent assurance
+
+This system is the first system under test in
+[Jagadish-ai-soc-assurance](https://github.com/jagadishmazure-jpg/Jagadish-ai-soc-assurance), a separate,
+vendor-neutral harness that drives it through an adapter at a pinned commit. That repository adds what this
+one cannot claim about itself: benchmarks against baselines with confidence intervals, replay of public
+attack recordings, failure-mode experiments, per-customer data-residency checks with Azure Policy, model
+risk packs per agent, an independent audit-trail replay and a capped product scorecard. Its findings
+(for example, low detection on public recordings and the Canadian customer's data processed in the US as
+shipped) apply to this repository and are not repeated here.
+
 ## Open gaps
 
 - Rules use a simplified schema; they are created disabled and need the column mapping before real use.
