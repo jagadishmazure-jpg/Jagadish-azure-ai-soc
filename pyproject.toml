@@ -9,7 +9,7 @@ requires-python = ">=3.13"
 # Pinned to the versions the tests were run with. No Azure SDK is a dependency: the Foundry adapter
 # imports agent-framework-foundry lazily, so the repo installs and runs with no cloud packages.
 dependencies = [
-  "agent-framework-core==1.19.0", # Microsoft Agent Framework: workflows, executors, agents, HITL requests
+  "agent-framework-core==1.20.0", # Microsoft Agent Framework: workflows, executors, agents, HITL requests
   "mcp==2.2.0",                   # Sentinel-MCP-shaped tool server
   "pydantic>=2.13,<3",            # structured model output
   "pyyaml==6.0.3",                # tenants, rules, thresholds, ATT&CK catalogue
