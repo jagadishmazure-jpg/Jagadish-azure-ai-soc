@@ -1,6 +1,6 @@
-# Starting thresholds for triage and routing. The feedback loop (aisoc feedback) learns tenant-specific
-# values from analyst reviews and writes them to out/learned/<tenant>.json; this file is never edited
-# by code, so the defaults stay reviewable.
+# Starting thresholds for triage and routing. The feedback loop learns tenant-specific values from
+# analyst reviews during a run (aisoc feedback prints them); this file is never edited by code, so the
+# defaults stay reviewable.
 auto_close_confidence: 0.90   # tier 1 may close a non-malicious verdict only at or above this confidence
 malicious_probability: 0.50   # p(malicious) at or above this is a true-positive verdict
 qa_sample_every: 10           # every Nth tier-1 closure goes to an analyst for quality review

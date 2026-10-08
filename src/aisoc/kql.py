@@ -1,8 +1,9 @@
 """A small, pure-Python interpreter for the subset of KQL this repository's queries use.
 
-The same `.kql` files are deployed to Microsoft Sentinel as analytics rules (infra/), run here over the
-synthetic tables, and can be run unchanged in the Kusto emulator (docs/components/kql-engine.md). The
-subset is deliberately small; anything outside it raises `KqlError` instead of guessing.
+The same `.kql` files feed the Sentinel analytics rules in infra/ and run here over the synthetic tables.
+They stay inside real KQL syntax, so they should also run in the Kusto emulator against tables with these
+columns; that cross-check is planned, not done (docs/components/kql-engine.md). The subset is
+deliberately small; anything outside it raises `KqlError` instead of guessing.
 
 Supported:
   let Name = <scalar | dynamic([...])>;

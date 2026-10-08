@@ -3,7 +3,8 @@
 To measure the feedback loop without people, an analyst is simulated from the labelled ground truth:
 the analyst's verdict is the gold verdict, a tier 3 case goes to the senior analyst, and customer
 approvers approve containment only for real attacks. Review times come from config/thresholds.yaml
-(analyst_minutes). This module is the only consumer of aisoc.labels outside metrics and tests."""
+(analyst_minutes). Outside metrics and tests, aisoc.labels is read only here and by the replay gate in aisoc.pipeline
+(where it stands in for the confirmed outcomes of past incidents)."""
 
 from __future__ import annotations
 

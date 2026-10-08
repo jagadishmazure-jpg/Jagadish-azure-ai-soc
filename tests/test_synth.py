@@ -67,3 +67,13 @@ def test_no_real_guids_in_data():
         for rows in load(t).tables.values():
             for r in rows[:200]:
                 assert not guid.search(str(r))
+
+
+@pytest.mark.parametrize("tenant", TENANTS)
+def test_ground_truth_never_travels_with_the_telemetry(tenant):
+    ds = synth.generate(tenant)
+    forbidden = {"label", "labels", "story", "verdict", "benign_kind", "truth"}
+    for name, rows in ds.tables.items():
+        for row in rows:
+            assert not forbidden & {k.lower() for k in row}, f"{name} carries a ground-truth column"
+    assert ds.labels and set(ds.labels) <= {r["EventId"] for rows in ds.tables.values() for r in rows if "EventId" in r}
