@@ -67,7 +67,7 @@ def table(now_day: float) -> list[dict]:
     return rows
 
 
-def _domain(value: str) -> str:
+def domain_of(value: str) -> str:
     if "://" in value:
         return urlsplit(value).hostname or ""
     return value.split("@")[-1] if "@" in value else value
@@ -77,8 +77,8 @@ def lookup(entity_type: str, value: str, day: float) -> list[Hit]:
     """Active indicators matching one entity. URLs and mailboxes match on their domain."""
     if not value:
         return []
-    want = {"ip": ("ipv4-addr", value), "url": ("domain-name", _domain(value)), "domain": ("domain-name", _domain(value)),
-            "mailbox": ("domain-name", _domain(value)), "filehash": ("file-sha256", value.lower())}.get(entity_type)  # fmt: skip
+    want = {"ip": ("ipv4-addr", value), "url": ("domain-name", domain_of(value)), "domain": ("domain-name", domain_of(value)),
+            "mailbox": ("domain-name", domain_of(value)), "filehash": ("file-sha256", value.lower())}.get(entity_type)  # fmt: skip
     if not want:
         return []
     hits = []

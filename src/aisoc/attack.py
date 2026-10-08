@@ -54,6 +54,11 @@ def map_alert(a: Alert) -> list[str]:
     return [t for t in uniq if not any(o.startswith(t + ".") for o in uniq)]
 
 
+def infer_text(text: str) -> list[str]:
+    """Techniques suggested by a free-text command line (used by the investigator on raw rows)."""
+    return sorted({tid for col, pattern, tid in INFER if col == "ProcessCommandLine" and re.search(pattern, text or "", re.I)})
+
+
 def coverage() -> dict:
     """Priority techniques with at least one analytics rule or product mapping."""
     detected: dict[str, list[str]] = {}

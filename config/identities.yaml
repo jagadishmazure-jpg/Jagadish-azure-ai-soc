@@ -1,0 +1,30 @@
+# Caller identities for the Sentinel-shaped tool gateway (aisoc.tools). Each identity is entitled to a
+# set of tenants and a set of tools; anything else is denied and audited. The agent identities map to
+# managed identities in the IaC (Microsoft Sentinel Reader on their own workspace only).
+identities:
+  agent:triage:
+    kind: agent
+    tenants: ["*"]          # one instance per tenant at run time; the gateway binds it to that tenant
+    tools: [get_incident, lookup_indicator, analyze_user_entity, analyze_host_entity]
+  agent:investigation:
+    kind: agent
+    tenants: ["*"]
+    tools: [list_sentinel_workspaces, search_tables, query_lake, analyze_user_entity, analyze_url_entity, analyze_host_entity, lookup_indicator, get_incident]
+  agent:response:
+    kind: agent
+    tenants: ["*"]
+    tools: [get_incident, analyze_user_entity, analyze_host_entity]
+  analyst.rivera:
+    kind: human
+    tenants: [brightwater, orchidvalley, pinecrest]
+    tools: ["*"]
+    raw_kql: true
+  analyst.okafor:
+    kind: human
+    tenants: [brightwater, orchidvalley, pinecrest]
+    tools: ["*"]
+    raw_kql: true
+  customer.brightwater.viewer:
+    kind: human
+    tenants: [brightwater]
+    tools: [list_sentinel_workspaces, get_incident]
