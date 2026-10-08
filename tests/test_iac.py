@@ -183,3 +183,17 @@ def test_deploy_script_has_every_subcommand():
     text = (ROOT / ".github/scripts/deploy.sh").read_text()
     for fn in ("provision()", "smoke()", "destroy()"):
         assert fn in text
+
+
+def test_iac_summary_reads_the_files():
+    from aisoc.iac import PARTS
+
+    tf = PARTS["terraform"]()
+    assert any("azurerm_sentinel_alert_rule_scheduled.rule  [for_each: var.deploy_analytics_rules" in x for x in tf)
+    assert sum("azurerm_role_assignment" in x for x in tf) == 2
+    bi = PARTS["bicep"]()
+    assert any("alertRules" in x and "loop; if deployAnalyticsRules" in x for x in bi)
+    assert any("network.bicep" in x and "if privateNetworking" in x for x in bi)
+    wf_lines = PARTS["workflows"]()
+    assert sum("id-token: write" in x for x in wf_lines) == 4  # deploy-dev, deploy-prod, plan, teardown
+    assert len(PARTS["rules"]()) == len(json.loads((ROOT / "detections/rules.json").read_text())["rules"])

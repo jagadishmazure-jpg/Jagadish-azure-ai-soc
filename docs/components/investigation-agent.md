@@ -103,9 +103,9 @@ containment plan (digest 115d2fd8318a215c):
   isolate_host OVC-WS008  approvals 1  permission Machine.Isolate
   block_ip 203.0.113.140  approvals 1  permission Ti.ReadWrite.All
 approved: True; executions: [('revoke_sessions', 'emery.calloway@orchidvalley.example', 'dry-run'), ('disable_user', 'emery.calloway@orchidvalley.example', 'dry-run'), ('isolate_host', 'OVC-WS008', 'dry-run'), ('block_ip', '203.0.113.140', 'dry-run')]
-narrative (fallback=False, injection obeyed=False, ~591 prompt tokens):
+narrative (fallback=False, injection obeyed=False, ~589 prompt tokens):
   Connection to a threat-intel address; Possible LSASS memory access; Suspicious PowerShell command line; Volume shadow co: malicious activity confirmed by evidence
-  Code verdict true_positive at confidence 0.99. Mapped techniques: T1003.001, T1059.001, T1071.001, T1204.002, T1490. Scope: accounts USER-1; external_ips 203.0.113.140; hosts HOST-19.
+  Code verdict true_positive at confidence 0.99. Mapped techniques: T1003.001, T1059.001, T1071.001, T1204.002, T1490. Scope: accounts USER-1; external_ips 203.0.113.140; hosts HOST-1.
   evidence cited: EV-001, EV-002, EV-003, EV-004; actions: block_ip, disable_user, isolate_host, revoke_sessions
 analyst: analyst.okafor -> true_positive
 ```

@@ -88,8 +88,11 @@ class Pseudonymizer:
             return "[EMAIL]"
 
         out = UPN.sub(upn, text)
-        for h in sorted(self.hosts, key=len, reverse=True):
-            out = re.sub(re.escape(h), self.token(h, "HOST"), out, flags=re.I)
+        # longest first so "BWL-DC01" is not split by a shorter name; ties broken by name, and only hosts
+        # that occur get a token, so numbering never depends on set order (PYTHONHASHSEED)
+        for h in sorted(self.hosts, key=lambda x: (-len(x), x)):
+            if re.search(re.escape(h), out, flags=re.I):
+                out = re.sub(re.escape(h), self.token(h, "HOST"), out, flags=re.I)
         return out
 
     def reverse(self) -> dict[str, str]:

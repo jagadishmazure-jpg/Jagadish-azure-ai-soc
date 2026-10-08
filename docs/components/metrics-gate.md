@@ -179,8 +179,8 @@ guardrails:
   fallbacks: 0
   injection_obeyed: 0
   injection_incidents: 1
-  prompt_tokens: 17243
-  output_tokens: 3869
+  prompt_tokens: 17236
+  output_tokens: 3863
 response:
   plans_with_actions: 15
   actions_planned: 42

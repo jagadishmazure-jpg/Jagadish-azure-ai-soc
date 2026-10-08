@@ -19,6 +19,7 @@ aisoc approvals                       approval policy checks on a real plan
 aisoc gate                            release gate (exit 1 on any failure)
 aisoc bench                           wall-clock timings (varies by machine; not used in doc checks)
 aisoc rules-json [--check]            write or check detections/rules.json for Terraform and Bicep
+aisoc iac --part P                    what the Terraform, Bicep, workflows and rules.json declare
 aisoc mcp --tenant T | mcp-demo
 """
 
@@ -464,6 +465,13 @@ def cmd_bench(a) -> int:
     return 0
 
 
+def cmd_iac(a) -> int:
+    from aisoc.iac import PARTS
+
+    print("\n".join(PARTS[a.part]()))
+    return 0
+
+
 def cmd_rules_json(a) -> int:
     from aisoc.detections import rules_json
 
@@ -546,6 +554,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--tenant", required=True, **tenant_kw)
     p.add_argument("--tamper", action="store_true")
     p.set_defaults(fn=cmd_audit)
+    p = sub.add_parser("iac")
+    p.add_argument("--part", choices=["terraform", "bicep", "workflows", "rules"], required=True)
+    p.set_defaults(fn=cmd_iac)
     p = sub.add_parser("rules-json")
     p.add_argument("--check", action="store_true")
     p.set_defaults(fn=cmd_rules_json)
