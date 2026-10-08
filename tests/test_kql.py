@@ -56,7 +56,9 @@ def test_filters(text, count):
 
 
 def test_summarize_with_bin_and_aggregates():
-    rows = q('S | where TimeGenerated > ago(1d) | summarize Fails = countif(R != "0"), Users = dcount(U), Ips = make_set(IP), Total = sum(N) by bin(TimeGenerated, 1d)')
+    rows = q(
+        'S | where TimeGenerated > ago(1d) | summarize Fails = countif(R != "0"), Users = dcount(U), Ips = make_set(IP), Total = sum(N) by bin(TimeGenerated, 1d)'
+    )
     assert len(rows) >= 1
     assert sum(r["Fails"] for r in rows) == 2 and sum(r["Total"] for r in rows) == 15
 

@@ -115,7 +115,9 @@ class MockSocChatClient(FunctionInvocationLayer, BaseChatClient):
             narrative=" ".join(story),
             key_evidence=evidence[:5],
             recommended_actions=actions if malicious else [],
-            analyst_questions=["Was this activity expected by the account owner?"] if not malicious else ["Has the account owner confirmed the activity was not theirs?"],
+            analyst_questions=["Was this activity expected by the account owner?"]
+            if not malicious
+            else ["Has the account owner confirmed the activity was not theirs?"],
         )
         return ChatResponse(messages=[Message(role="assistant", contents=[summary.model_dump_json()])], model="aisoc-mock")
 
@@ -133,7 +135,9 @@ def get_chat_client(gullible: bool = False) -> BaseChatClient:
     )
 
 
-def build_prompt(inc: Incident, inv: Investigation, plan: ContainmentPlan, pseudo: guardrails.Pseudonymizer, guard: bool = True, max_evidence: int = 25) -> str:
+def build_prompt(
+    inc: Incident, inv: Investigation, plan: ContainmentPlan, pseudo: guardrails.Pseudonymizer, guard: bool = True, max_evidence: int = 25
+) -> str:
     def clean(text: str) -> str:
         return guardrails.prepare(text, pseudo, guard)[0] if guard else text
 
@@ -150,14 +154,16 @@ def build_prompt(inc: Incident, inv: Investigation, plan: ContainmentPlan, pseud
     for e in inv.timeline()[:max_evidence]:
         ev_lines.append(f"{e.id} {e.kind}: {clean(e.summary)} ({e.why})")
     alert_lines = [f"- {a.name}: {clean(str(a.fields.get('Description') or ''))}" for a in inc.alerts if a.product]
-    return "\n".join([
-        "Write the incident summary.",
-        "FACTS: " + json.dumps(facts, sort_keys=True),
-        "EVIDENCE:",
-        *ev_lines,
-        "PRODUCT ALERT TEXT:",
-        *alert_lines,
-    ])
+    return "\n".join(
+        [
+            "Write the incident summary.",
+            "FACTS: " + json.dumps(facts, sort_keys=True),
+            "EVIDENCE:",
+            *ev_lines,
+            "PRODUCT ALERT TEXT:",
+            *alert_lines,
+        ]
+    )
 
 
 def validate_summary(s: IncidentSummary, inc: Incident, inv: Investigation, plan: ContainmentPlan) -> list[str]:
@@ -190,8 +196,9 @@ def fallback(inc: Incident, inv: Investigation, plan: ContainmentPlan) -> Incide
     )
 
 
-async def write_narrative(inc: Incident, inv: Investigation, plan: ContainmentPlan, pseudo: guardrails.Pseudonymizer,
-                          guard: bool = True, gullible: bool = False) -> Narrative:
+async def write_narrative(
+    inc: Incident, inv: Investigation, plan: ContainmentPlan, pseudo: guardrails.Pseudonymizer, guard: bool = True, gullible: bool = False
+) -> Narrative:
     prompt = build_prompt(inc, inv, plan, pseudo, guard)
     agent = Agent(client=get_chat_client(gullible), instructions=INSTRUCTIONS, name="narrative-writer")
     resp = await agent.run(prompt, options={"response_format": IncidentSummary})
@@ -201,5 +208,13 @@ async def write_narrative(inc: Incident, inv: Investigation, plan: ContainmentPl
     used_fallback = bool(issues)
     if used_fallback:
         summary = fallback(inc, inv, plan)
-    return Narrative(summary, issues, used_fallback, prompt, estimate_tokens(INSTRUCTIONS + prompt), estimate_tokens(summary.model_dump_json()),
-                     injection_obeyed=obeyed, pseudonyms=pseudo.reverse())
+    return Narrative(
+        summary,
+        issues,
+        used_fallback,
+        prompt,
+        estimate_tokens(INSTRUCTIONS + prompt),
+        estimate_tokens(summary.model_dump_json()),
+        injection_obeyed=obeyed,
+        pseudonyms=pseudo.reverse(),
+    )

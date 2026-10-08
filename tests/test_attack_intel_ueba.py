@@ -60,7 +60,9 @@ def test_ti_confidence_decays_and_expires():
     assert intel.effective_confidence(ind, 8) == 0
 
 
-@pytest.mark.parametrize("kind,value", [("url", "https://login-verify.example/reset"), ("mailbox", "x@mailbox-drop.example"), ("ip", "203.0.113.140")])
+@pytest.mark.parametrize(
+    "kind,value", [("url", "https://login-verify.example/reset"), ("mailbox", "x@mailbox-drop.example"), ("ip", "203.0.113.140")]
+)
 def test_ti_lookup_matches_on_domain_or_value(kind, value):
     assert intel.lookup(kind, value, 10)
 

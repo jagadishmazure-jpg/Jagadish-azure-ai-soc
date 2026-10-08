@@ -292,7 +292,7 @@ class Parser:
                     self.next()
                     args.append(self.expr())
             self.expect(")")
-            default = {"count": "count_", "countif": "countif_"}.get(fn, f"{ {'make_set': 'set', 'take_any': 'any'}.get(fn, fn)}_")
+            default = {"count": "count_", "countif": "countif_"}.get(fn, f"{ {'make_set': 'set', 'take_any': 'any'}.get(fn, fn) }_")
             aggs.append((alias or default, fn, args))
             if not self.at(","):
                 break
@@ -450,7 +450,9 @@ class Parser:
             items = self.list_operand()
             neg = op.startswith("!")
             if op.lstrip("!") == "has_any":
-                return lambda r, e: (not any(_term(left(r, e), str(x)) for x in items(r, e))) if neg else any(_term(left(r, e), str(x)) for x in items(r, e))
+                return lambda r, e: (
+                    (not any(_term(left(r, e), str(x)) for x in items(r, e))) if neg else any(_term(left(r, e), str(x)) for x in items(r, e))
+                )
             return lambda r, e: (left(r, e) not in items(r, e)) if neg else (left(r, e) in items(r, e))
         return left
 

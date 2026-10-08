@@ -136,7 +136,9 @@ def plan(store: TenantStore, inc: Incident, inv: Investigation) -> ContainmentPl
         sensitive = users.get(target, {}).get("IsPrivileged") or target in t.crown_jewels
         ev = tuple(e.id for e in inv.evidence if target.lower() in e.summary.lower())[:5]
         p.actions.append(
-            PlannedAction(action, target, reason, ev, 2 if sensitive else 1, cat[action]["permission"], cat[action]["request"].replace("{target}", target))
+            PlannedAction(
+                action, target, reason, ev, 2 if sensitive else 1, cat[action]["permission"], cat[action]["request"].replace("{target}", target)
+            )
         )
     return p
 
@@ -170,7 +172,9 @@ class LiveExecutor:
         raise NotImplementedError("live containment is intentionally not implemented; this repository records requests only")
 
 
-def execute(store: TenantStore, p: ContainmentPlan, approved: bool, audit: AuditLog, at: datetime, identity: str = "svc:containment-executor") -> list[ExecutionRecord]:
+def execute(
+    store: TenantStore, p: ContainmentPlan, approved: bool, audit: AuditLog, at: datetime, identity: str = "svc:containment-executor"
+) -> list[ExecutionRecord]:
     mode = os.environ.get("AISOC_EXECUTE", "dry-run")
     out = []
     if not approved:

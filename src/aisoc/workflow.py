@@ -120,8 +120,12 @@ class TriageNode(Node):
         d = self.deps
         with self.timed(case):
             inc = enrich_and_score(d.store, case.incident, d.kb, d.learned, d.guard)
-            d.audit.append("agent:triage", "triage.scored", {"incident": inc.id, "verdict": inc.verdict, "p": inc.p_malicious,
-                           "features": inc.features, "duplicates": inc.duplicates}, _at(case))
+            d.audit.append(
+                "agent:triage",
+                "triage.scored",
+                {"incident": inc.id, "verdict": inc.verdict, "p": inc.p_malicious, "features": inc.features, "duplicates": inc.duplicates},
+                _at(case),
+            )
         await ctx.send_message(case)
 
 
@@ -133,7 +137,9 @@ class RouteNode(Node):
         d = self.deps
         with self.timed(case):
             case.route = route(d.store, case.incident, d.learned)
-            d.audit.append("agent:triage", "case.routed", {"incident": case.incident.id, "tier": case.route.tier, "reasons": list(case.route.reasons)}, _at(case))
+            d.audit.append(
+                "agent:triage", "case.routed", {"incident": case.incident.id, "tier": case.route.tier, "reasons": list(case.route.reasons)}, _at(case)
+            )
         await ctx.send_message(case)
 
 
@@ -146,8 +152,17 @@ class CloseNode(Node):
         with self.timed(case):
             d.counters["closed"] = d.counters.get("closed", 0) + 1
             case.qa_sampled = d.counters["closed"] % thresholds()["qa_sample_every"] == 0
-            d.audit.append("agent:triage", "case.auto_closed", {"incident": case.incident.id, "verdict": case.incident.verdict,
-                           "confidence": case.incident.confidence, "qa_sampled": case.qa_sampled}, _at(case))
+            d.audit.append(
+                "agent:triage",
+                "case.auto_closed",
+                {
+                    "incident": case.incident.id,
+                    "verdict": case.incident.verdict,
+                    "confidence": case.incident.confidence,
+                    "qa_sampled": case.qa_sampled,
+                },
+                _at(case),
+            )
         if case.qa_sampled:
             await ctx.request_info(_request(case, "qa"), AnalystDecision)
             return
@@ -157,8 +172,12 @@ class CloseNode(Node):
     async def qa(self, req: ReviewRequest, decision: AnalystDecision, ctx: WorkflowContext[Case, Case]) -> None:
         case = self.deps.cases[req.incident_id]
         case.decision = decision
-        self.deps.audit.append(decision.analyst, "case.qa_reviewed", {"incident": req.incident_id, "verdict": decision.verdict,
-                               "agrees": decision.verdict == req.verdict}, decision.decided_at)
+        self.deps.audit.append(
+            decision.analyst,
+            "case.qa_reviewed",
+            {"incident": req.incident_id, "verdict": decision.verdict, "agrees": decision.verdict == req.verdict},
+            decision.decided_at,
+        )
         await ctx.send_message(case)
 
 
@@ -195,8 +214,17 @@ class PlanNode(Node):
         d = self.deps
         with self.timed(case):
             p = case.plan
-            d.audit.append("agent:response", "containment.planned", {"incident": p.incident_id, "digest": p.digest,
-                           "actions": [(a.action, a.target, a.approvals_required) for a in p.actions], "denied": p.denied}, _at(case))
+            d.audit.append(
+                "agent:response",
+                "containment.planned",
+                {
+                    "incident": p.incident_id,
+                    "digest": p.digest,
+                    "actions": [(a.action, a.target, a.approvals_required) for a in p.actions],
+                    "denied": p.denied,
+                },
+                _at(case),
+            )
         await ctx.send_message(case)
 
 
@@ -206,8 +234,9 @@ class ApprovalGate(Node):
     @handler
     async def run(self, case: Case, ctx: WorkflowContext[Case, Case]) -> None:
         req = _request(case, "approval")
-        self.deps.audit.append("agent:response", "approval.requested", {"incident": req.incident_id, "digest": req.plan_digest,
-                               "tier": req.tier}, req.requested_at)
+        self.deps.audit.append(
+            "agent:response", "approval.requested", {"incident": req.incident_id, "digest": req.plan_digest, "tier": req.tier}, req.requested_at
+        )
         await ctx.request_info(req, AnalystDecision)
 
     @response_handler
@@ -219,8 +248,12 @@ class ApprovalGate(Node):
         case.approved, case.approval_problems = ok, problems
         for a in decision.approvals:
             d.audit.append(a.approver, "approval.decided", {"incident": req.incident_id, "digest": a.plan_digest, "approved": a.approved}, a.at)
-        d.audit.append(decision.analyst, "case.reviewed", {"incident": req.incident_id, "verdict": decision.verdict, "ai_verdict": req.verdict,
-                       "override": decision.verdict != req.verdict}, decision.decided_at)
+        d.audit.append(
+            decision.analyst,
+            "case.reviewed",
+            {"incident": req.incident_id, "verdict": decision.verdict, "ai_verdict": req.verdict, "override": decision.verdict != req.verdict},
+            decision.decided_at,
+        )
         case.executions = response.execute(d.store, case.plan, ok, d.audit, decision.decided_at)
         await ctx.send_message(case)
 

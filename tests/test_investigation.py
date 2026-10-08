@@ -4,11 +4,25 @@ import ast
 from pathlib import Path
 
 import pytest
-
 from conftest import case
 
 SRC = Path(__file__).resolve().parents[1] / "src" / "aisoc"
-PRODUCT = ["triage", "routing", "investigation", "response", "tools", "llm", "workflow", "knowledge", "guardrails", "ueba", "intel", "detections", "store", "mcp_server"]
+PRODUCT = [
+    "triage",
+    "routing",
+    "investigation",
+    "response",
+    "tools",
+    "llm",
+    "workflow",
+    "knowledge",
+    "guardrails",
+    "ueba",
+    "intel",
+    "detections",
+    "store",
+    "mcp_server",
+]
 
 
 @pytest.mark.parametrize("module", PRODUCT)
@@ -16,7 +30,9 @@ def test_product_code_never_imports_ground_truth(module):
     tree = ast.parse((SRC / f"{module}.py").read_text())
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
-            assert not (node.module == "aisoc.labels" or (node.module == "aisoc" and any(a.name in ("labels", "analyst", "metrics") for a in node.names))), module
+            assert not (
+                node.module == "aisoc.labels" or (node.module == "aisoc" and any(a.name in ("labels", "analyst", "metrics") for a in node.names))
+            ), module
         if isinstance(node, ast.Import):
             assert not any(a.name in ("aisoc.labels", "aisoc.analyst") for a in node.names), module
 

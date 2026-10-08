@@ -13,7 +13,7 @@ def incidents(tenant):
 
 
 def test_product_and_rule_alerts_on_same_event_are_merged():
-    s, incs = incidents("orchidvalley")
+    _s, incs = incidents("orchidvalley")
     rw = next(i for i in incs if "ti-c2-connection" in i.sources)
     assert rw.duplicates >= 2  # Defender alerts duplicated our encoded-powershell and lsass rules
     assert {"Suspicious PowerShell command line", "Possible LSASS memory access"} <= set(rw.sources)
@@ -26,13 +26,13 @@ def test_alert_volume_is_reduced_by_grouping():
 
 
 def test_corporate_egress_never_correlates_unrelated_users():
-    s, incs = incidents("brightwater")
+    _s, incs = incidents("brightwater")
     for i in incs:
         assert "198.51.100.101" not in {v for a in i.alerts for v in a.entity_values("ip")} or len(i.entities("account")) <= 1
 
 
 def test_spray_and_success_correlate_into_one_incident():
-    s, incs = incidents("brightwater")
+    _s, incs = incidents("brightwater")
     i = next(i for i in incs if "success-after-spray" in i.sources)
     assert "password-spray" in i.sources
 

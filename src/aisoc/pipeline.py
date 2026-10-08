@@ -67,7 +67,9 @@ def replay_gate(store: TenantStore, incidents: list[Incident], kb: KnowledgeBase
     return misses
 
 
-async def run_tenant(tenant_id: str, mode: str = "learning", guard: bool = True, gullible: bool = False, store: TenantStore | None = None) -> TenantRun:
+async def run_tenant(
+    tenant_id: str, mode: str = "learning", guard: bool = True, gullible: bool = False, store: TenantStore | None = None
+) -> TenantRun:
     store = store or load(tenant_id)
     kb = KnowledgeBase(tenant_id)
     learned = Learned()

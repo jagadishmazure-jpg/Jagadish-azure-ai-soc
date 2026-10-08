@@ -93,11 +93,21 @@ def baselines(store: TenantStore, as_of: datetime) -> dict[str, UserBaseline]:
 def score_user(store: TenantStore, user: str, start: datetime, end: datetime) -> Anomaly:
     """Anomaly of `user` in [start, end) against the baseline ending at the start of that day."""
     base = baselines(store, start).get(user)
-    downloads = sum(1 for r in store.tables["CloudAppEvents"] if r.get("AccountUpn") == user and r["ActionType"] == "FileDownloaded" and start <= r["TimeGenerated"] < end)
-    uploads = sum(
-        1 for r in store.tables["CloudAppEvents"] if r.get("AccountUpn") == user and r["ActionType"] == "FileUploaded" and r["IsExternal"] and start <= r["TimeGenerated"] < end
+    downloads = sum(
+        1
+        for r in store.tables["CloudAppEvents"]
+        if r.get("AccountUpn") == user and r["ActionType"] == "FileDownloaded" and start <= r["TimeGenerated"] < end
     )
-    countries = {r["Location"] for r in store.tables["SigninLogs"] if r["UserPrincipalName"] == user and r["ResultType"] == "0" and start <= r["TimeGenerated"] < end}
+    uploads = sum(
+        1
+        for r in store.tables["CloudAppEvents"]
+        if r.get("AccountUpn") == user and r["ActionType"] == "FileUploaded" and r["IsExternal"] and start <= r["TimeGenerated"] < end
+    )
+    countries = {
+        r["Location"]
+        for r in store.tables["SigninLogs"]
+        if r["UserPrincipalName"] == user and r["ResultType"] == "0" and start <= r["TimeGenerated"] < end
+    }
     reasons = []
     if base is None:
         return Anomaly(user, 0.0, 0.0, downloads, None, uploads, 0.0, ("no baseline",))

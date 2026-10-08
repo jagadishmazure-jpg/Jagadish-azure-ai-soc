@@ -104,7 +104,9 @@ class SentinelTools:
     def list_sentinel_workspaces(self) -> list[dict]:
         t = self.store.tenant
         n = sorted(tenants()).index(t.id) + 1
-        return self._call("list_sentinel_workspaces", {}, lambda: [{"name": t.workspace, "tenant": t.name, "id": f"00000000-0000-0000-0000-{n:012d}"}])
+        return self._call(
+            "list_sentinel_workspaces", {}, lambda: [{"name": t.workspace, "tenant": t.name, "id": f"00000000-0000-0000-0000-{n:012d}"}]
+        )
 
     def search_tables(self, keyword: str, workspace: str | None = None) -> list[dict]:
         def run():
@@ -119,7 +121,9 @@ class SentinelTools:
 
         return self._call("search_tables", {"keyword": keyword, "workspace": workspace}, run)
 
-    def query_lake(self, template: str | None = None, params: dict[str, str] | None = None, kql_text: str | None = None, workspace: str | None = None) -> list[dict]:
+    def query_lake(
+        self, template: str | None = None, params: dict[str, str] | None = None, kql_text: str | None = None, workspace: str | None = None
+    ) -> list[dict]:
         args = {"template": template, "params": params or {}, "raw": bool(kql_text), "workspace": workspace}
         ident = self._authorize("query_lake", args)
         if kql_text is not None:
@@ -149,8 +153,14 @@ class SentinelTools:
             u = users[upn]
             day0 = self.as_of.replace(hour=0, minute=0, second=0, microsecond=0)
             a = ueba.score_user(self._view, upn, day0, day0 + timedelta(days=1))
-            return {"upn": upn, "known": True, "department": u.get("Department"), "privileged": bool(u.get("IsPrivileged")),
-                    "anomaly_score": a.score, "anomalies": list(a.reasons)}
+            return {
+                "upn": upn,
+                "known": True,
+                "department": u.get("Department"),
+                "privileged": bool(u.get("IsPrivileged")),
+                "anomaly_score": a.score,
+                "anomalies": list(a.reasons),
+            }
 
         return self._call("analyze_user_entity", {"upn": upn}, run)
 
@@ -159,8 +169,13 @@ class SentinelTools:
             host = re.sub(r"^[a-z]+://", "", url).split("/")[0].lower()
             hits = intel.lookup("domain", host, day_of(self.as_of))
             clicks = [r for r in self._view.tables.get("UrlClickEvents", []) if host in str(r.get("Url", "")).lower()]
-            return {"url": url, "domain": host, "indicators": [h.__dict__ for h in hits], "clicks": len(clicks),
-                    "clicked_by": sorted({c["AccountUpn"] for c in clicks})}
+            return {
+                "url": url,
+                "domain": host,
+                "indicators": [h.__dict__ for h in hits],
+                "clicks": len(clicks),
+                "clicked_by": sorted({c["AccountUpn"] for c in clicks}),
+            }
 
         return self._call("analyze_url_entity", {"url": url}, run)
 
@@ -170,23 +185,36 @@ class SentinelTools:
             a = self._view.assets().get(host)
             if a is None:
                 return {"host": host, "known": False}
-            return {"host": host, "known": True, "role": a.get("Role"), "criticality": a.get("Criticality"),
-                    "internet_facing": a.get("InternetFacing"), "open_critical_cves": a.get("OpenCriticalCves"),
-                    "crown_jewel": host in self.store.tenant.crown_jewels}
+            return {
+                "host": host,
+                "known": True,
+                "role": a.get("Role"),
+                "criticality": a.get("Criticality"),
+                "internet_facing": a.get("InternetFacing"),
+                "open_critical_cves": a.get("OpenCriticalCves"),
+                "crown_jewel": host in self.store.tenant.crown_jewels,
+            }
 
         return self._call("analyze_host_entity", {"host": host}, run)
 
     def lookup_indicator(self, kind: str, value: str) -> list[dict]:
-        return self._call("lookup_indicator", {"kind": kind, "value": value},
-                          lambda: [h.__dict__ for h in intel.lookup(kind, value, day_of(self.as_of))])
+        return self._call(
+            "lookup_indicator", {"kind": kind, "value": value}, lambda: [h.__dict__ for h in intel.lookup(kind, value, day_of(self.as_of))]
+        )
 
     def get_incident(self, incident_id: str) -> dict:
         def run():
             inc = self.incidents.get(incident_id)
             if inc is None or inc.tenant != self.store.tenant.id:
                 return {"id": incident_id, "found": False}
-            return {"id": inc.id, "found": True, "alerts": [{"id": a.id, "name": a.name, "source": a.source, "severity": a.severity,
-                    "entities": a.entities, "event_ids": a.event_ids} for a in inc.alerts]}
+            return {
+                "id": inc.id,
+                "found": True,
+                "alerts": [
+                    {"id": a.id, "name": a.name, "source": a.source, "severity": a.severity, "entities": a.entities, "event_ids": a.event_ids}
+                    for a in inc.alerts
+                ],
+            }
 
         return self._call("get_incident", {"incident_id": incident_id}, run)
 

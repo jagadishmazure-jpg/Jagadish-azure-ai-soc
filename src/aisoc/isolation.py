@@ -64,7 +64,12 @@ def cross_tenant_attempts() -> list[tuple[str, str]]:
     except ToolDenied as e:
         out.append(("query another tenant's workspace", f"denied: {e}"))
     rows = tools.query_lake("user_signins", {"upn": "ciso@orchidvalley.example", "lookback": "500h", "until": "0h"})
-    out.append(("query another tenant's user through own workspace", "denied: 0 rows (the gateway's store holds only brightwater data)" if not rows else f"ALLOWED: {len(rows)} rows"))
+    out.append(
+        (
+            "query another tenant's user through own workspace",
+            "denied: 0 rows (the gateway's store holds only brightwater data)" if not rows else f"ALLOWED: {len(rows)} rows",
+        )
+    )
     try:
         SentinelTools(bw, "customer.pinecrest.viewer", audit, bw.now).list_sentinel_workspaces()
         out.append(("unknown identity", "ALLOWED"))

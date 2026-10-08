@@ -61,8 +61,18 @@ class FeedbackLoop:
         if d is None:
             return
         inc = case.incident
-        r = Review(inc.tenant, inc.id, "train" if day_of(inc.start) < TRAIN_DAYS else "holdout", case.route.tier if case.route else 0,
-                   "qa" if case.qa_sampled else "review", tuple(inc.sources), inc.verdict, inc.confidence, d.verdict, d.analyst)
+        r = Review(
+            inc.tenant,
+            inc.id,
+            "train" if day_of(inc.start) < TRAIN_DAYS else "holdout",
+            case.route.tier if case.route else 0,
+            "qa" if case.qa_sampled else "review",
+            tuple(inc.sources),
+            inc.verdict,
+            inc.confidence,
+            d.verdict,
+            d.analyst,
+        )
         self.reviews.append(r)
         if not self.enabled:
             return

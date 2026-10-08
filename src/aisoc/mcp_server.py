@@ -21,7 +21,15 @@ from aisoc.store import load
 from aisoc.tools import SentinelTools
 
 RO = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
-TOOL_NAMES = ["list_sentinel_workspaces", "search_tables", "query_lake", "analyze_user_entity", "analyze_url_entity", "analyze_host_entity", "lookup_indicator"]
+TOOL_NAMES = [
+    "list_sentinel_workspaces",
+    "search_tables",
+    "query_lake",
+    "analyze_user_entity",
+    "analyze_url_entity",
+    "analyze_host_entity",
+    "lookup_indicator",
+]
 
 
 def build_server(tenant: str = "brightwater", identity: str = "agent:investigation", audit: AuditLog | None = None) -> MCPServer:
@@ -82,12 +90,16 @@ async def demo() -> list[str]:
         lines.append(f"workspaces: {[w['name'] for w in ws]}")
         ind = (await client.call_tool("lookup_indicator", {"kind": "ip", "value": "203.0.113.77"})).structured_content["result"]
         lines.append(f"203.0.113.77: {[(i['indicator_id'], i['labels'], round(i['confidence'], 1)) for i in ind]}")
-        rows = (await client.call_tool("query_lake", {"template": "ip_signins", "params": {"ip": "203.0.113.77", "lookback": "504h", "until": "0h"}})).structured_content["result"]
+        rows = (
+            await client.call_tool("query_lake", {"template": "ip_signins", "params": {"ip": "203.0.113.77", "lookback": "504h", "until": "0h"}})
+        ).structured_content["result"]
         lines.append(f"ip_signins 203.0.113.77: attempts {rows[0]['Attempts']}, failures {rows[0]['Failures']}, accounts {rows[0]['Accounts']}")
-        bad = await client.call_tool("query_lake", {"template": "ip_signins", "params": {"ip": "203.0.113.77\" | take 1000", "lookback": "24h", "until": "0h"}})
+        bad = await client.call_tool(
+            "query_lake", {"template": "ip_signins", "params": {"ip": '203.0.113.77" | take 1000', "lookback": "24h", "until": "0h"}}
+        )
         lines.append(f"injected parameter: is_error={bad.is_error}")
         host = (await client.call_tool("analyze_host_entity", {"host": "BWL-DC01"})).structured_content
         lines.append(f"BWL-DC01: role {host['role']}, criticality {host['criticality']}, crown jewel {host['crown_jewel']}")
-    ok, msg = audit.verify()
+    _ok, msg = audit.verify()
     lines.append(f"audit: {msg}; denied calls {len(audit.events('tool.denied'))}")
     return lines

@@ -6,12 +6,12 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from conftest import case
 
 from aisoc import response
 from aisoc.audit import AuditLog
 from aisoc.response import EXECUTOR_PERMISSIONS, Approval, LiveExecutor, PolicyViolation, catalogue
 from aisoc.store import load
-from conftest import case
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -61,7 +61,10 @@ def test_dual_control_needs_two_distinct_approvers(ov_plan):
 
 def test_a_rejection_blocks_the_plan(ov_plan):
     store, plan, at = ov_plan
-    apps = [Approval("ciso@orchidvalley.example", plan.digest, True, at), Approval("it.manager@orchidvalley.example", plan.digest, False, at, "wrong host")]
+    apps = [
+        Approval("ciso@orchidvalley.example", plan.digest, True, at),
+        Approval("it.manager@orchidvalley.example", plan.digest, False, at, "wrong host"),
+    ]
     assert not response.validate_approvals(store, plan, apps, at)[0]
 
 
@@ -72,8 +75,15 @@ def test_changed_plan_invalidates_approval(ov_plan):
     assert changed.digest != plan.digest and not response.validate_approvals(store, changed, [approval], at)[0]
 
 
-@pytest.mark.parametrize("action,target", [("disable_user", "breakglass01@brightwater.example"), ("disable_user", "ciso@orchidvalley.example"),
-                                           ("isolate_host", "PCU-DC01"), ("delete_mailbox", "a@brightwater.example")])
+@pytest.mark.parametrize(
+    "action,target",
+    [
+        ("disable_user", "breakglass01@brightwater.example"),
+        ("disable_user", "ciso@orchidvalley.example"),
+        ("isolate_host", "PCU-DC01"),
+        ("delete_mailbox", "a@brightwater.example"),
+    ],
+)
 def test_policy_refusals(action, target):
     with pytest.raises(PolicyViolation):
         response.check_policy(load("brightwater"), action, target)

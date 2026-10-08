@@ -43,7 +43,9 @@ def test_unknown_template_and_extra_parameters_are_refused():
 @pytest.mark.parametrize("name", sorted(templates()["templates"]))
 def test_every_template_compiles_and_runs(name):
     t = templates()["templates"][name]
-    sample = {"account": {"upn": UPN}, "host": {"host": "BWL-DC01"}, "ip": {"ip": "203.0.113.77"}, "domain": {"domain": "login-verify.example"}}[t["entity"]]
+    sample = {"account": {"upn": UPN}, "host": {"host": "BWL-DC01"}, "ip": {"ip": "203.0.113.77"}, "domain": {"domain": "login-verify.example"}}[
+        t["entity"]
+    ]
     rows = gw().query_lake(name, {**sample, "lookback": "504h", "until": "0h"})
     assert isinstance(rows, list)
 

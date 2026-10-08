@@ -109,7 +109,9 @@ def evaluate(horizon_days: int = 3) -> dict:
             top = rank(store, T0 + timedelta(days=d))[:TOP_K]
             for r in top:
                 slots += 1
-                hits += any(r.entity in (set(s["entities"]["accounts"]) | set(s["entities"]["hosts"])) and 0 <= s["day"] - d < horizon_days for s in st)
+                hits += any(
+                    r.entity in (set(s["entities"]["accounts"]) | set(s["entities"]["hosts"])) and 0 <= s["day"] - d < horizon_days for s in st
+                )
     n_entities = sum(len(load(t).users()) + len(load(t).assets()) for t in tenants())
     per_tenant = n_entities / len(tenants())
     return {

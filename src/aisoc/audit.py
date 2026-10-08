@@ -28,7 +28,15 @@ class AuditLog:
 
     def append(self, actor: str, event: str, data: dict[str, Any], at: datetime | None = None) -> dict:
         prev = self.records[-1]["hash"] if self.records else GENESIS
-        rec = {"seq": len(self.records) + 1, "tenant": self.tenant, "at": at.isoformat() if at else None, "actor": actor, "event": event, "data": data, "prev": prev}
+        rec = {
+            "seq": len(self.records) + 1,
+            "tenant": self.tenant,
+            "at": at.isoformat() if at else None,
+            "actor": actor,
+            "event": event,
+            "data": data,
+            "prev": prev,
+        }
         rec["hash"] = hashlib.sha256(_canon(rec).encode()).hexdigest()
         self.records.append(rec)
         return rec

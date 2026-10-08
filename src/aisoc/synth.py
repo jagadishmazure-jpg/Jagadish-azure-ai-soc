@@ -144,7 +144,9 @@ class _Gen:
                 "AccountUpn": upn,
                 "DisplayName": f"{firsts[i]} {lasts[i]}",
                 "Department": dept,
-                "JobTitle": {"it": "Systems Administrator", "data": "Data Engineer", "executive": "Chief Operating Officer"}.get(dept, f"{dept.title()} Specialist"),
+                "JobTitle": {"it": "Systems Administrator", "data": "Data Engineer", "executive": "Chief Operating Officer"}.get(
+                    dept, f"{dept.title()} Specialist"
+                ),
                 "IsPrivileged": dept == "it" or dept == "executive",
                 "Country": t.home_country,
                 "City": cities[i % len(cities)],
@@ -172,7 +174,16 @@ class _Gen:
             ("ADM01", "admin-workstation", 4, False, 0),
         ]
         for name, role, crit, inet, cves in servers:
-            assets.append({"DeviceName": f"{t.prefix}-{name}", "Role": role, "Criticality": crit, "InternetFacing": inet, "OpenCriticalCves": cves, "PrimaryUser": ""})
+            assets.append(
+                {
+                    "DeviceName": f"{t.prefix}-{name}",
+                    "Role": role,
+                    "Criticality": crit,
+                    "InternetFacing": inet,
+                    "OpenCriticalCves": cves,
+                    "PrimaryUser": "",
+                }
+            )
         self.ds.tables["DeviceInfo"] = [dict(a, TimeGenerated=T0) for a in assets]
         self.assets = {a["DeviceName"]: a for a in assets}
 
@@ -347,7 +358,6 @@ class _Gen:
         return {"accounts": [u["AccountUpn"]], "ips": ["203.0.113.140"], "hosts": [host]}
 
     def _insider(self, sid, day, hour, ev) -> dict:
-        t = self.t
         u = self.by_dept["finance"][1]
         for k, n in enumerate((14, 18, 24, 30)):  # drift in the days before
             for j in range(n):

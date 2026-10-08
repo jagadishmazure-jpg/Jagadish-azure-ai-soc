@@ -30,7 +30,7 @@ INJECTION_PATTERNS = [
 _INJ = re.compile("|".join(f"(?:{p})" for p in INJECTION_PATTERNS), re.I)
 
 PII_PATTERNS = {
-    "SSN": re.compile(r"\b(?!000|666|9\d\d)\d{3}-(?!00)\d{2}-(?!0000)\d{4}\b"),
+    "SSN": re.compile(r"(?<!\d)(?!000|666|9\d\d)\d{3}-(?!00)\d{2}-(?!0000)\d{4}(?!\d)"),
     "PHONE": re.compile(r"\+?1?[-. ]?\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b|\+\d{1,2}-\d{3}-\d{4}\b"),
     "CARD": re.compile(r"\b(?:\d[ -]?){13,16}\b"),
 }

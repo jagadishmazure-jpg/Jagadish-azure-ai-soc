@@ -90,8 +90,14 @@ def _summ(table: str, r: dict) -> str:
     return str(r)
 
 
-TEMPLATE_TABLE = {"user_signins": "SigninLogs", "user_cloud_activity": "CloudAppEvents", "user_email": "EmailEvents", "user_url_clicks": "UrlClickEvents",
-                  "host_processes": "DeviceProcessEvents", "host_network": "DeviceNetworkEvents"}
+TEMPLATE_TABLE = {
+    "user_signins": "SigninLogs",
+    "user_cloud_activity": "CloudAppEvents",
+    "user_email": "EmailEvents",
+    "user_url_clicks": "UrlClickEvents",
+    "host_processes": "DeviceProcessEvents",
+    "host_network": "DeviceNetworkEvents",
+}
 
 
 def investigate(store: TenantStore, inc: Incident, audit: AuditLog, incidents: dict | None = None) -> Investigation:
@@ -105,7 +111,9 @@ def investigate(store: TenantStore, inc: Incident, audit: AuditLog, incidents: d
     hours = math.ceil((as_of - (inc.start - LOOKBACK)).total_seconds() / 3600)
     window = {"lookback": f"{hours}h", "until": "0h"}
     own_events = set(inc.event_ids)
-    bad_ips = {h.value for h in inc.ti_hits if h.entity_type == "ip"} | {ip for ip in inc.entities("ip") if ip not in benign_ips and ip not in tenant.authorized_scanners}
+    bad_ips = {h.value for h in inc.ti_hits if h.entity_type == "ip"} | {
+        ip for ip in inc.entities("ip") if ip not in benign_ips and ip not in tenant.authorized_scanners
+    }
     bad_domains = {intel.domain_of(h.value) for h in inc.ti_hits if h.entity_type in ("url", "domain", "mailbox")}
     seen: set[str] = set()
     tools.get_incident(inc.id)

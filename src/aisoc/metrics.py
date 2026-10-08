@@ -74,9 +74,24 @@ def stories(run: Run) -> list[StoryResult]:
                 done = case.decision.decided_at + _machine(case)
                 mttr = round((done - first).total_seconds() / 60, 1)
             alerted = sorted({x for a in mine for x in attack.map_alert(a)})
-            out.append(StoryResult(t, s["id"], s["kind"], s["window"], rel(s["first_event"]), bool(mine), mttd,
-                                   case.incident.id if case else None, case.route.tier if case else None,
-                                   case.incident.verdict if case else None, contained, mttr, tuple(s["techniques"]), tuple(alerted)))
+            out.append(
+                StoryResult(
+                    t,
+                    s["id"],
+                    s["kind"],
+                    s["window"],
+                    rel(s["first_event"]),
+                    bool(mine),
+                    mttd,
+                    case.incident.id if case else None,
+                    case.route.tier if case else None,
+                    case.incident.verdict if case else None,
+                    contained,
+                    mttr,
+                    tuple(s["techniques"]),
+                    tuple(alerted),
+                )
+            )
     return out
 
 
