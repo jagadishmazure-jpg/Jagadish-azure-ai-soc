@@ -102,7 +102,6 @@ def test_validator_rejects_bad_summaries(learning, change, needle):
 
 @pytest.mark.parametrize("guard,gullible,obeyed", [(True, False, False), (True, True, False), (False, False, False), (False, True, True)])
 def test_injection_what_if(learning, guard, gullible, obeyed):
-    _inc, _inv, _plan = _ctx(learning)
     bw = case(learning, "brightwater", "INC-BR-027")
     s = load("brightwater")
     pseudo = guardrails.Pseudonymizer("brightwater", s.tenant.domain, set(s.assets()))
