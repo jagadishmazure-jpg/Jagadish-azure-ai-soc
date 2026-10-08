@@ -1,0 +1,27 @@
+# MITRE ATT&CK (Enterprise) techniques this SOC prioritises, with names and tactics as published by
+# MITRE (https://attack.mitre.org). `priority: true` techniques form the coverage denominator.
+# ATT&CK is a registered trademark of The MITRE Corporation; used under its terms of use.
+techniques:
+  - { id: T1566.001, name: "Phishing: Spearphishing Attachment", tactic: initial-access, priority: true }
+  - { id: T1566.002, name: "Phishing: Spearphishing Link", tactic: initial-access, priority: true }
+  - { id: T1078, name: "Valid Accounts", tactic: initial-access, priority: true }
+  - { id: T1078.004, name: "Valid Accounts: Cloud Accounts", tactic: initial-access, priority: true }
+  - { id: T1110.003, name: "Brute Force: Password Spraying", tactic: credential-access, priority: true }
+  - { id: T1110.001, name: "Brute Force: Password Guessing", tactic: credential-access, priority: true }
+  - { id: T1003.001, name: "OS Credential Dumping: LSASS Memory", tactic: credential-access, priority: true }
+  - { id: T1059.001, name: "Command and Scripting Interpreter: PowerShell", tactic: execution, priority: true }
+  - { id: T1204.002, name: "User Execution: Malicious File", tactic: execution, priority: true }
+  - { id: T1071.001, name: "Application Layer Protocol: Web Protocols", tactic: command-and-control, priority: true }
+  - { id: T1490, name: "Inhibit System Recovery", tactic: impact, priority: true }
+  - { id: T1486, name: "Data Encrypted for Impact", tactic: impact, priority: true }
+  - { id: T1114.003, name: "Email Collection: Email Forwarding Rule", tactic: collection, priority: true }
+  - { id: T1530, name: "Data from Cloud Storage", tactic: collection, priority: true }
+  - { id: T1567.002, name: "Exfiltration Over Web Service: Exfiltration to Cloud Storage", tactic: exfiltration, priority: true }
+  - { id: T1021.001, name: "Remote Services: Remote Desktop Protocol", tactic: lateral-movement, priority: true }
+  - { id: T1053.005, name: "Scheduled Task/Job: Scheduled Task", tactic: persistence, priority: true }
+  - { id: T1136.003, name: "Create Account: Cloud Account", tactic: persistence, priority: true }
+  - { id: T1098, name: "Account Manipulation", tactic: persistence, priority: true }
+  - { id: T1562.001, name: "Impair Defenses: Disable or Modify Tools", tactic: defense-evasion, priority: true }
+  - { id: T1070.001, name: "Indicator Removal: Clear Windows Event Logs", tactic: defense-evasion, priority: true }
+  - { id: T1048, name: "Exfiltration Over Alternative Protocol", tactic: exfiltration, priority: false }
+  - { id: T1190, name: "Exploit Public-Facing Application", tactic: initial-access, priority: false }

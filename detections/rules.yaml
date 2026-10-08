@@ -1,0 +1,140 @@
+# Analytics rules. Each entry points at a .kql file in this folder. The same metadata drives the local
+# scheduled-rule simulation (aisoc.detections), the Terraform azurerm_sentinel_alert_rule_scheduled
+# resources and the Bicep alertRules loop (both read detections/rules.json, built by
+# scripts/build_rules.py and drift-checked in CI).
+#   prior      starting p(malicious) for an alert from this rule; the feedback loop learns per tenant
+#   crossing   how the alert time is derived from contributing events: first | nth (count) | distinct
+#   entities   column -> entity type (account, host, ip, url, mailbox)
+rules:
+  - id: password-spray
+    name: Password spray against many accounts
+    file: password-spray.kql
+    severity: Medium
+    tactics: [CredentialAccess]
+    techniques: [T1110.003]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.45
+    crossing: { distinct: UserPrincipalName, n: 5, table: SigninLogs }
+    entities: { IPAddress: ip }
+  - id: success-after-spray
+    name: Successful sign-in from a spraying address
+    file: success-after-spray.kql
+    severity: High
+    tactics: [InitialAccess, CredentialAccess]
+    techniques: [T1078.004, T1110.003]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.75
+    crossing: { first: true }
+    entities: { UserPrincipalName: account, IPAddress: ip }
+  - id: encoded-powershell
+    name: PowerShell with an encoded command
+    file: encoded-powershell.kql
+    severity: Medium
+    tactics: [Execution]
+    techniques: [T1059.001]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.45
+    crossing: { first: true }
+    entities: { DeviceName: host, AccountUpn: account }
+  - id: office-spawns-script
+    name: Office application starts a script interpreter
+    file: office-spawns-script.kql
+    severity: High
+    tactics: [Execution]
+    techniques: [T1204.002, T1059.001]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.7
+    crossing: { first: true }
+    entities: { DeviceName: host, AccountUpn: account }
+  - id: lsass-dump
+    name: LSASS memory dump
+    file: lsass-dump.kql
+    severity: High
+    tactics: [CredentialAccess]
+    techniques: [T1003.001]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.8
+    crossing: { first: true }
+    entities: { DeviceName: host, AccountUpn: account }
+  - id: shadow-copy-delete
+    name: Volume shadow copies deleted
+    file: shadow-copy-delete.kql
+    severity: High
+    tactics: [Impact]
+    techniques: [T1490]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.5
+    crossing: { first: true }
+    entities: { DeviceName: host, AccountUpn: account }
+  - id: ti-c2-connection
+    name: Connection to a threat-intel address
+    file: ti-c2-connection.kql
+    severity: High
+    tactics: [CommandAndControl]
+    techniques: [T1071.001]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.7
+    crossing: { first: true }
+    entities: { DeviceName: host, RemoteIP: ip }
+  - id: ti-url-click
+    name: Click on a threat-intel domain
+    file: ti-url-click.kql
+    severity: High
+    tactics: [InitialAccess]
+    techniques: [T1566.002]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.7
+    crossing: { first: true }
+    entities: { AccountUpn: account, Url: url }
+  - id: phish-click
+    name: Click on a link in a phishing message
+    file: phish-click.kql
+    severity: Medium
+    tactics: [InitialAccess]
+    techniques: [T1566.002]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.5
+    crossing: { first: true }
+    entities: { AccountUpn: account, Url: url }
+  - id: inbox-forward-external
+    name: Mailbox rule forwards externally
+    file: inbox-forward-external.kql
+    severity: High
+    tactics: [Collection]
+    techniques: [T1114.003]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.65
+    crossing: { first: true }
+    entities: { AccountUpn: account, IPAddress: ip }
+  - id: mass-download
+    name: Mass file download
+    file: mass-download.kql
+    severity: Medium
+    tactics: [Collection]
+    techniques: [T1530]
+    frequency: PT1H
+    period: P1D
+    prior: 0.35
+    crossing: { nth: 50 }
+    entities: { AccountUpn: account }
+  - id: exfil-personal-cloud
+    name: Uploads to an external cloud destination
+    file: exfil-personal-cloud.kql
+    severity: High
+    tactics: [Exfiltration]
+    techniques: [T1567.002]
+    frequency: PT5M
+    period: PT1H
+    prior: 0.6
+    crossing: { nth: 5 }
+    entities: { AccountUpn: account }

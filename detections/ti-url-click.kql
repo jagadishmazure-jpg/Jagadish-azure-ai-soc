@@ -1,0 +1,10 @@
+// A user clicked a link whose domain is an active indicator on the threat-intelligence feed.
+UrlClickEvents
+| where ActionType == "ClickAllowed"
+| extend UrlDomain = tostring(parse_url(Url).Host)
+| join kind=inner (
+    ThreatIntelligenceIndicator
+    | where Active == true and isnotempty(DomainName) and ExpirationDateTime > now()
+    | project UrlDomain = DomainName, IndicatorId, ConfidenceScore
+  ) on UrlDomain
+| project TimeGenerated, AccountUpn, Url, UrlDomain, IndicatorId, ConfidenceScore, EventId

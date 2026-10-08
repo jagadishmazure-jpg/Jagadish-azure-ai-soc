@@ -1,0 +1,16 @@
+{
+  "feed": "halyard-curated",
+  "description": "Fictional MSSP threat-intelligence feed, shaped like STIX 2.1 indicators reduced to the fields this SOC uses. Values are documentation-range IPs and .example domains.",
+  "reference_day": 21,
+  "indicators": [
+    {"id": "ind-0001", "type": "ipv4-addr", "value": "203.0.113.140", "confidence": 90, "first_seen_day": 2, "valid_days": 60, "labels": ["c2", "commodity-loader"], "actor": "GLASS SPIDERLING (fictional)", "techniques": ["T1071.001"]},
+    {"id": "ind-0002", "type": "ipv4-addr", "value": "203.0.113.24", "confidence": 70, "first_seen_day": 1, "valid_days": 30, "labels": ["phishing-infrastructure", "aitm-proxy"], "actor": "TIDEPOOL (fictional)", "techniques": ["T1566.002", "T1078.004"]},
+    {"id": "ind-0003", "type": "domain-name", "value": "login-verify.example", "confidence": 85, "first_seen_day": 1, "valid_days": 45, "labels": ["credential-phishing"], "actor": "TIDEPOOL (fictional)", "techniques": ["T1566.002"]},
+    {"id": "ind-0004", "type": "domain-name", "value": "mailbox-drop.example", "confidence": 75, "first_seen_day": 3, "valid_days": 45, "labels": ["bec-forwarding-sink"], "actor": "TIDEPOOL (fictional)", "techniques": ["T1114.003"]},
+    {"id": "ind-0005", "type": "ipv4-addr", "value": "203.0.113.77", "confidence": 60, "first_seen_day": 8, "valid_days": 14, "labels": ["password-spray-source"], "actor": "unattributed", "techniques": ["T1110.003"]},
+    {"id": "ind-0006", "type": "file-sha256", "value": "a3f1c0de5b7e9d2c4a6b8f0e1d3c5b7a9f2e4d6c8b0a1f3e5d7c9b2a4f6e8d0c", "confidence": 80, "first_seen_day": 4, "valid_days": 90, "labels": ["loader"], "actor": "GLASS SPIDERLING (fictional)", "techniques": ["T1204.002"]},
+    {"id": "ind-0007", "type": "ipv4-addr", "value": "203.0.113.9", "confidence": 40, "first_seen_day": 0, "valid_days": 7, "labels": ["scanner"], "actor": "unattributed", "techniques": []},
+    {"id": "ind-0008", "type": "domain-name", "value": "personal-drive.example", "confidence": 30, "first_seen_day": 0, "valid_days": 365, "labels": ["consumer-cloud-storage"], "actor": "n/a (category, not malicious)", "techniques": ["T1567.002"]},
+    {"id": "ind-0009", "type": "ipv4-addr", "value": "203.0.113.200", "confidence": 65, "first_seen_day": 15, "valid_days": 30, "labels": ["token-replay"], "actor": "unattributed", "techniques": ["T1078.004"]}
+  ]
+}

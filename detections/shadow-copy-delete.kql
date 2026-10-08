@@ -1,0 +1,5 @@
+// Volume shadow copies deleted (a common step before encryption).
+DeviceProcessEvents
+| where FileName =~ "vssadmin.exe"
+| where ProcessCommandLine has "delete" and ProcessCommandLine has "shadows"
+| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, EventId

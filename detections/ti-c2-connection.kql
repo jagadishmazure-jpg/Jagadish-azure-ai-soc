@@ -1,0 +1,8 @@
+// Outbound connection to an active address on the threat-intelligence feed.
+DeviceNetworkEvents
+| join kind=inner (
+    ThreatIntelligenceIndicator
+    | where Active == true and isnotempty(NetworkIP) and ExpirationDateTime > now()
+    | project RemoteIP = NetworkIP, IndicatorId, ConfidenceScore
+  ) on RemoteIP
+| project TimeGenerated, DeviceName, RemoteIP, RemotePort, InitiatingProcessFileName, IndicatorId, ConfidenceScore, EventId

@@ -1,0 +1,5 @@
+// A mailbox rule forwards mail to an external address.
+CloudAppEvents
+| where ActionType in ("New-InboxRule", "Set-InboxRule")
+| where IsExternal == true
+| project TimeGenerated, AccountUpn, Destination, IPAddress, EventId

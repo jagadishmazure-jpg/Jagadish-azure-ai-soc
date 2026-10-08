@@ -1,0 +1,4 @@
+// Credential dumping through the comsvcs.dll MiniDump export or procdump against LSASS.
+DeviceProcessEvents
+| where ProcessCommandLine has "MiniDump" or (ProcessCommandLine has "procdump" and ProcessCommandLine has "lsass")
+| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, EventId

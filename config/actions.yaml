@@ -1,0 +1,33 @@
+# Containment action catalogue. An action not listed here cannot be planned, approved or executed.
+# `permission` is the single application permission the executor identity would need; the IaC never
+# grants these (see docs/components/response-containment.md). Requests are recorded, not sent, unless
+# AISOC_EXECUTE=live, and the live executor is deliberately not implemented in this repo.
+actions:
+  disable_user:
+    target: account
+    api: Microsoft Graph
+    request: "PATCH /v1.0/users/{target} {accountEnabled: false}"
+    permission: User.EnableDisableAccount.All
+    reversible_by: "PATCH /v1.0/users/{target} {accountEnabled: true}"
+    risk: high
+  revoke_sessions:
+    target: account
+    api: Microsoft Graph
+    request: "POST /v1.0/users/{target}/revokeSignInSessions"
+    permission: User.RevokeSessions.All
+    reversible_by: "none needed (the user signs in again)"
+    risk: medium
+  isolate_host:
+    target: host
+    api: Microsoft Defender for Endpoint
+    request: "POST /api/machines/{target}/isolate {IsolationType: Selective}"
+    permission: Machine.Isolate
+    reversible_by: "POST /api/machines/{target}/unisolate"
+    risk: high
+  block_ip:
+    target: ip
+    api: Microsoft Defender for Endpoint
+    request: "POST /api/indicators {indicatorValue: {target}, indicatorType: IpAddress, action: Block}"
+    permission: Ti.ReadWrite.All
+    reversible_by: "DELETE /api/indicators/{id}"
+    risk: low

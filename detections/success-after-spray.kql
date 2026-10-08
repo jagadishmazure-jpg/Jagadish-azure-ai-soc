@@ -1,0 +1,11 @@
+// A successful sign-in from an address that failed for five or more accounts in the same hour.
+SigninLogs
+| where ResultType == "0"
+| extend Window = bin(TimeGenerated, 1h)
+| join kind=inner (
+    SigninLogs
+    | where ResultType != "0"
+    | summarize FailedAccounts = dcount(UserPrincipalName) by IPAddress, Window = bin(TimeGenerated, 1h)
+    | where FailedAccounts >= 5
+  ) on IPAddress, Window
+| project TimeGenerated, UserPrincipalName, IPAddress, Location, FailedAccounts, EventId

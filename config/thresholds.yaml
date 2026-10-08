@@ -1,0 +1,16 @@
+# Starting thresholds for triage and routing. The feedback loop (aisoc feedback) learns tenant-specific
+# values from analyst reviews and writes them to out/learned/<tenant>.json; this file is never edited
+# by code, so the defaults stay reviewable.
+auto_close_confidence: 0.90   # tier 1 may close a non-malicious verdict only at or above this confidence
+malicious_probability: 0.50   # p(malicious) at or above this is a true-positive verdict
+qa_sample_every: 10           # every Nth tier-1 closure goes to an analyst for quality review
+min_reviews_to_tune: 4        # a rule needs this many reviewed incidents before its threshold moves
+threshold_floor: 0.70         # learned auto-close thresholds never go below this
+threshold_margin: 0.05        # learned threshold sits this far above the highest-confidence missed TP
+correlation_window_hours: 24  # alert groups sharing an entity inside this window form one incident
+dedupe_window_minutes: 60     # same rule + same primary entity inside this window is one alert group
+ingestion_delay_minutes: 5    # assumed log ingestion latency added to every detection time
+analyst_minutes:              # simulated analyst response time used for the MTTR simulation
+  tier2: 20
+  tier3: 45
+  qa: 30

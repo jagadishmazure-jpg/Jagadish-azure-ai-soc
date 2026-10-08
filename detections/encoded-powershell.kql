@@ -1,0 +1,5 @@
+// PowerShell started with an encoded command line.
+DeviceProcessEvents
+| where FileName =~ "powershell.exe"
+| where ProcessCommandLine contains "-enc"
+| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, SHA256, EventId

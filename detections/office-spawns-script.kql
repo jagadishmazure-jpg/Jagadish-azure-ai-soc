@@ -1,0 +1,5 @@
+// An Office application starts a script interpreter (macro or malicious document).
+DeviceProcessEvents
+| where InitiatingProcessFileName in~ ("winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe")
+| where FileName in~ ("powershell.exe", "cmd.exe", "wscript.exe", "mshta.exe")
+| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, FileName, ProcessCommandLine, EventId

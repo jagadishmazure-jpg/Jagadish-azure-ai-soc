@@ -1,0 +1,5 @@
+// Fifty or more files downloaded by one account in a day (a static threshold; UEBA adds per-user baselines).
+CloudAppEvents
+| where ActionType == "FileDownloaded"
+| summarize Files = count(), TotalMB = sum(SizeMB), EventIds = make_set(EventId) by AccountUpn, Window = bin(TimeGenerated, 1d)
+| where Files >= 50

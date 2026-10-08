@@ -1,0 +1,9 @@
+// A user clicked a link in a message that Defender for Office 365 classified as phishing.
+UrlClickEvents
+| where ActionType == "ClickAllowed"
+| join kind=inner (
+    EmailEvents
+    | where ThreatTypes has "Phish"
+    | project NetworkMessageId, SenderFromAddress, Subject
+  ) on NetworkMessageId
+| project TimeGenerated, AccountUpn, Url, SenderFromAddress, Subject, EventId

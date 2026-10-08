@@ -1,0 +1,57 @@
+# Fictional MSSP and its tenants. Every name, domain and address is invented: domains use the reserved
+# .example TLD and IP addresses come from the documentation ranges (RFC 5737).
+mssp:
+  name: Halyard Security Services
+  short: halyard
+  description: Fictional managed security service provider running one SOC for several customer tenants.
+  analysts:
+    - id: analyst.rivera
+      tier: 2
+    - id: analyst.okafor
+      tier: 3
+tenants:
+  - id: brightwater
+    name: Brightwater Logistics
+    industry: logistics
+    domain: brightwater.example
+    workspace: law-soc-brightwater
+    home_country: US
+    users: 30
+    hosts: 24
+    vpn_egress:
+      - { ip: 198.51.100.10, country: DE, city: Frankfurt }
+    authorized_scanners: [198.51.100.50]
+    phish_sim_sender: training@phishdrill.example
+    approvers: [soc.lead@brightwater.example, it.director@brightwater.example]
+    break_glass: [breakglass01@brightwater.example]
+    crown_jewels: [BWL-DC01, BWL-ERP01]
+  - id: orchidvalley
+    name: Orchid Valley Clinics
+    industry: healthcare
+    domain: orchidvalley.example
+    workspace: law-soc-orchidvalley
+    home_country: CA
+    users: 26
+    hosts: 22
+    vpn_egress:
+      - { ip: 198.51.100.20, country: US, city: Seattle }
+    authorized_scanners: [198.51.100.60]
+    phish_sim_sender: awareness@phishdrill.example
+    approvers: [ciso@orchidvalley.example, it.manager@orchidvalley.example]
+    break_glass: [breakglass01@orchidvalley.example]
+    crown_jewels: [OVC-DC01, OVC-EHR01]
+  - id: pinecrest
+    name: Pinecrest Credit Union
+    industry: financial services
+    domain: pinecrest.example
+    workspace: law-soc-pinecrest
+    home_country: US
+    users: 28
+    hosts: 22
+    vpn_egress:
+      - { ip: 198.51.100.30, country: GB, city: London }
+    authorized_scanners: [198.51.100.70]
+    phish_sim_sender: drills@phishdrill.example
+    approvers: [security.manager@pinecrest.example, cio@pinecrest.example]
+    break_glass: [breakglass01@pinecrest.example]
+    crown_jewels: [PCU-DC01, PCU-CORE01]

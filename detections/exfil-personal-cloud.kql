@@ -1,0 +1,5 @@
+// Five or more uploads to an external destination by one account within an hour.
+CloudAppEvents
+| where ActionType == "FileUploaded" and IsExternal == true
+| summarize Uploads = count(), TotalMB = sum(SizeMB), Destinations = make_set(Destination), EventIds = make_set(EventId) by AccountUpn, Window = bin(TimeGenerated, 1h)
+| where Uploads >= 5
