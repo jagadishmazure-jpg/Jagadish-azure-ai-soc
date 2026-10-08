@@ -128,7 +128,12 @@ class SentinelTools:
                 raise ToolDenied(f"{self.identity} may only run allow-listed templates")
             text = kql_text
         else:
-            text = render_template(template or "", params or {})
+            try:
+                text = render_template(template or "", params or {})
+            except ToolDenied as exc:
+                self.audit.append(self.identity, "tool.denied", {"tool": "query_lake", "args": args, "reason": str(exc)}, self.as_of)
+                self.calls.append(ToolCall("query_lake", args, 0, 0.0, False))
+                raise
         t0 = time.perf_counter()
         rows = kql.run(text, self._view.tables, self.as_of)[:MAX_ROWS]
         ms = (time.perf_counter() - t0) * 1000

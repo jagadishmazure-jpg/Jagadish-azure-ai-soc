@@ -1,7 +1,7 @@
 # Analytics rules. Each entry points at a .kql file in this folder. The same metadata drives the local
 # scheduled-rule simulation (aisoc.detections), the Terraform azurerm_sentinel_alert_rule_scheduled
 # resources and the Bicep alertRules loop (both read detections/rules.json, built by
-# scripts/build_rules.py and drift-checked in CI).
+# `aisoc rules-json` and drift-checked in CI and by the release gate).
 #   prior      starting p(malicious) for an alert from this rule; the feedback loop learns per tenant
 #   crossing   how the alert time is derived from contributing events: first | nth (count) | distinct
 #   entities   column -> entity type (account, host, ip, url, mailbox)

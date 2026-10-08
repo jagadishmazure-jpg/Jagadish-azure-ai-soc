@@ -158,7 +158,7 @@ def rules_json() -> dict:
     """detections/rules.json: rules with their query text embedded, for Terraform and Bicep."""
     keep = ("id", "name", "severity", "tactics", "techniques", "frequency", "period", "entities")
     return {
-        "generated_by": "scripts/build_rules.py from detections/rules.yaml and the .kql files; do not edit",
+        "generated_by": "aisoc rules-json from detections/rules.yaml and the .kql files; do not edit",
         "rules": [
             {**{k: r[k] for k in keep}, "parent_techniques": sorted({t.split(".")[0] for t in r["techniques"]}), "query": r["query"]} for r in rules()
         ],

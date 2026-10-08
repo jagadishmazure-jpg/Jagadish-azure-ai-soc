@@ -101,9 +101,9 @@ def score_user(store: TenantStore, user: str, start: datetime, end: datetime) ->
     reasons = []
     if base is None:
         return Anomaly(user, 0.0, 0.0, downloads, None, uploads, 0.0, ("no baseline",))
-    hours = max((end - start).total_seconds() / 86400, 1 / 24)
-    expected = max(base.mean_downloads, 0.5) * hours
-    spread = max(base.std_downloads * hours, 0.25 * max(base.peer_mean_downloads, 1) * hours, 2.0)
+    days = max((end - start).total_seconds() / 86400, 1 / 24)
+    expected = max(base.mean_downloads, 0.5) * days
+    spread = max(base.std_downloads * days, 0.25 * max(base.peer_mean_downloads, 1) * days, 2.0)
     z = (downloads - expected) / spread
     new_country = next((c for c in sorted(countries) if base.countries and c not in base.countries), None)
     midnight = start.replace(hour=0, minute=0, second=0, microsecond=0)

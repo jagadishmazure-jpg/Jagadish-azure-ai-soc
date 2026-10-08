@@ -67,8 +67,8 @@ def replay_gate(store: TenantStore, incidents: list[Incident], kb: KnowledgeBase
     return misses
 
 
-async def run_tenant(tenant_id: str, mode: str = "learning", guard: bool = True, gullible: bool = False) -> TenantRun:
-    store = load(tenant_id)
+async def run_tenant(tenant_id: str, mode: str = "learning", guard: bool = True, gullible: bool = False, store: TenantStore | None = None) -> TenantRun:
+    store = store or load(tenant_id)
     kb = KnowledgeBase(tenant_id)
     learned = Learned()
     audit = AuditLog(tenant_id)
@@ -97,10 +97,10 @@ async def run_tenant(tenant_id: str, mode: str = "learning", guard: bool = True,
     return tr
 
 
-async def run_async(mode: str = "learning", guard: bool = True, gullible: bool = False) -> Run:
+async def run_async(mode: str = "learning", guard: bool = True, gullible: bool = False, stores: dict[str, TenantStore] | None = None) -> Run:
     out = {}
     for t in sorted(tenants()):
-        out[t] = await run_tenant(t, mode, guard, gullible)
+        out[t] = await run_tenant(t, mode, guard, gullible, (stores or {}).get(t))
     return Run(mode, guard, out)
 
 

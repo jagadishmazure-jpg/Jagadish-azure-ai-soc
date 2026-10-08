@@ -1,0 +1,259 @@
+{
+  "generated_by": "aisoc rules-json from detections/rules.yaml and the .kql files; do not edit",
+  "rules": [
+    {
+      "id": "password-spray",
+      "name": "Password spray against many accounts",
+      "severity": "Medium",
+      "tactics": [
+        "CredentialAccess"
+      ],
+      "techniques": [
+        "T1110.003"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "IPAddress": "ip"
+      },
+      "parent_techniques": [
+        "T1110"
+      ],
+      "query": "// Password spray: one source address fails sign-in for many distinct accounts within an hour.\nSigninLogs\n| where ResultType != \"0\"\n| summarize FailedAccounts = dcount(UserPrincipalName), Attempts = count(), EventIds = make_set(EventId) by IPAddress, Window = bin(TimeGenerated, 1h)\n| where FailedAccounts >= 5\n"
+    },
+    {
+      "id": "success-after-spray",
+      "name": "Successful sign-in from a spraying address",
+      "severity": "High",
+      "tactics": [
+        "InitialAccess",
+        "CredentialAccess"
+      ],
+      "techniques": [
+        "T1078.004",
+        "T1110.003"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "UserPrincipalName": "account",
+        "IPAddress": "ip"
+      },
+      "parent_techniques": [
+        "T1078",
+        "T1110"
+      ],
+      "query": "// A successful sign-in from an address that failed for five or more accounts in the same hour.\nSigninLogs\n| where ResultType == \"0\"\n| extend Window = bin(TimeGenerated, 1h)\n| join kind=inner (\n    SigninLogs\n    | where ResultType != \"0\"\n    | summarize FailedAccounts = dcount(UserPrincipalName) by IPAddress, Window = bin(TimeGenerated, 1h)\n    | where FailedAccounts >= 5\n  ) on IPAddress, Window\n| project TimeGenerated, UserPrincipalName, IPAddress, Location, FailedAccounts, EventId\n"
+    },
+    {
+      "id": "encoded-powershell",
+      "name": "PowerShell with an encoded command",
+      "severity": "Medium",
+      "tactics": [
+        "Execution"
+      ],
+      "techniques": [
+        "T1059.001"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "DeviceName": "host",
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1059"
+      ],
+      "query": "// PowerShell started with an encoded command line.\nDeviceProcessEvents\n| where FileName =~ \"powershell.exe\"\n| where ProcessCommandLine contains \"-enc\"\n| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, SHA256, EventId\n"
+    },
+    {
+      "id": "office-spawns-script",
+      "name": "Office application starts a script interpreter",
+      "severity": "High",
+      "tactics": [
+        "Execution"
+      ],
+      "techniques": [
+        "T1204.002",
+        "T1059.001"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "DeviceName": "host",
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1059",
+        "T1204"
+      ],
+      "query": "// An Office application starts a script interpreter (macro or malicious document).\nDeviceProcessEvents\n| where InitiatingProcessFileName in~ (\"winword.exe\", \"excel.exe\", \"powerpnt.exe\", \"outlook.exe\")\n| where FileName in~ (\"powershell.exe\", \"cmd.exe\", \"wscript.exe\", \"mshta.exe\")\n| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, FileName, ProcessCommandLine, EventId\n"
+    },
+    {
+      "id": "lsass-dump",
+      "name": "LSASS memory dump",
+      "severity": "High",
+      "tactics": [
+        "CredentialAccess"
+      ],
+      "techniques": [
+        "T1003.001"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "DeviceName": "host",
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1003"
+      ],
+      "query": "// Credential dumping through the comsvcs.dll MiniDump export or procdump against LSASS.\nDeviceProcessEvents\n| where ProcessCommandLine has \"MiniDump\" or (ProcessCommandLine has \"procdump\" and ProcessCommandLine has \"lsass\")\n| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, EventId\n"
+    },
+    {
+      "id": "shadow-copy-delete",
+      "name": "Volume shadow copies deleted",
+      "severity": "High",
+      "tactics": [
+        "Impact"
+      ],
+      "techniques": [
+        "T1490"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "DeviceName": "host",
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1490"
+      ],
+      "query": "// Volume shadow copies deleted (a common step before encryption).\nDeviceProcessEvents\n| where FileName =~ \"vssadmin.exe\"\n| where ProcessCommandLine has \"delete\" and ProcessCommandLine has \"shadows\"\n| project TimeGenerated, DeviceName, AccountUpn, InitiatingProcessFileName, ProcessCommandLine, EventId\n"
+    },
+    {
+      "id": "ti-c2-connection",
+      "name": "Connection to a threat-intel address",
+      "severity": "High",
+      "tactics": [
+        "CommandAndControl"
+      ],
+      "techniques": [
+        "T1071.001"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "DeviceName": "host",
+        "RemoteIP": "ip"
+      },
+      "parent_techniques": [
+        "T1071"
+      ],
+      "query": "// Outbound connection to an active address on the threat-intelligence feed.\nDeviceNetworkEvents\n| join kind=inner (\n    ThreatIntelligenceIndicator\n    | where Active == true and isnotempty(NetworkIP) and ExpirationDateTime > now()\n    | project RemoteIP = NetworkIP, IndicatorId, ConfidenceScore\n  ) on RemoteIP\n| project TimeGenerated, DeviceName, RemoteIP, RemotePort, InitiatingProcessFileName, IndicatorId, ConfidenceScore, EventId\n"
+    },
+    {
+      "id": "ti-url-click",
+      "name": "Click on a threat-intel domain",
+      "severity": "High",
+      "tactics": [
+        "InitialAccess"
+      ],
+      "techniques": [
+        "T1566.002"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "AccountUpn": "account",
+        "Url": "url"
+      },
+      "parent_techniques": [
+        "T1566"
+      ],
+      "query": "// A user clicked a link whose domain is an active indicator on the threat-intelligence feed.\nUrlClickEvents\n| where ActionType == \"ClickAllowed\"\n| extend UrlDomain = tostring(parse_url(Url).Host)\n| join kind=inner (\n    ThreatIntelligenceIndicator\n    | where Active == true and isnotempty(DomainName) and ExpirationDateTime > now()\n    | project UrlDomain = DomainName, IndicatorId, ConfidenceScore\n  ) on UrlDomain\n| project TimeGenerated, AccountUpn, Url, UrlDomain, IndicatorId, ConfidenceScore, EventId\n"
+    },
+    {
+      "id": "phish-click",
+      "name": "Click on a link in a phishing message",
+      "severity": "Medium",
+      "tactics": [
+        "InitialAccess"
+      ],
+      "techniques": [
+        "T1566.002"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "AccountUpn": "account",
+        "Url": "url"
+      },
+      "parent_techniques": [
+        "T1566"
+      ],
+      "query": "// A user clicked a link in a message that Defender for Office 365 classified as phishing.\nUrlClickEvents\n| where ActionType == \"ClickAllowed\"\n| join kind=inner (\n    EmailEvents\n    | where ThreatTypes has \"Phish\"\n    | project NetworkMessageId, SenderFromAddress, Subject\n  ) on NetworkMessageId\n| project TimeGenerated, AccountUpn, Url, SenderFromAddress, Subject, EventId\n"
+    },
+    {
+      "id": "inbox-forward-external",
+      "name": "Mailbox rule forwards externally",
+      "severity": "High",
+      "tactics": [
+        "Collection"
+      ],
+      "techniques": [
+        "T1114.003"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "AccountUpn": "account",
+        "IPAddress": "ip"
+      },
+      "parent_techniques": [
+        "T1114"
+      ],
+      "query": "// A mailbox rule forwards mail to an external address.\nCloudAppEvents\n| where ActionType in (\"New-InboxRule\", \"Set-InboxRule\")\n| where IsExternal == true\n| project TimeGenerated, AccountUpn, Destination, IPAddress, EventId\n"
+    },
+    {
+      "id": "mass-download",
+      "name": "Mass file download",
+      "severity": "Medium",
+      "tactics": [
+        "Collection"
+      ],
+      "techniques": [
+        "T1530"
+      ],
+      "frequency": "PT1H",
+      "period": "P1D",
+      "entities": {
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1530"
+      ],
+      "query": "// Fifty or more files downloaded by one account in a day (a static threshold; UEBA adds per-user baselines).\nCloudAppEvents\n| where ActionType == \"FileDownloaded\"\n| summarize Files = count(), TotalMB = sum(SizeMB), EventIds = make_set(EventId) by AccountUpn, Window = bin(TimeGenerated, 1d)\n| where Files >= 50\n"
+    },
+    {
+      "id": "exfil-personal-cloud",
+      "name": "Uploads to an external cloud destination",
+      "severity": "High",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "techniques": [
+        "T1567.002"
+      ],
+      "frequency": "PT5M",
+      "period": "PT1H",
+      "entities": {
+        "AccountUpn": "account"
+      },
+      "parent_techniques": [
+        "T1567"
+      ],
+      "query": "// Five or more uploads to an external destination by one account within an hour.\nCloudAppEvents\n| where ActionType == \"FileUploaded\" and IsExternal == true\n| summarize Uploads = count(), TotalMB = sum(SizeMB), Destinations = make_set(Destination), EventIds = make_set(EventId) by AccountUpn, Window = bin(TimeGenerated, 1h)\n| where Uploads >= 5\n"
+    }
+  ]
+}
