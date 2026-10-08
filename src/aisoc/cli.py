@@ -38,8 +38,10 @@ from aisoc.synth import rel
 
 def _quiet() -> None:
     logging.basicConfig(level=logging.WARNING)
-    for name in ("agent_framework", "mcp", "httpx"):
+    for name in ("agent_framework", "httpx"):
         logging.getLogger(name).setLevel(logging.ERROR)
+    # the MCP server logs expected tool denials at ERROR; the client already sees is_error
+    logging.getLogger("mcp").setLevel(logging.CRITICAL)
 
 
 def _table(rows: list[list], header: list[str]) -> str:
@@ -82,7 +84,11 @@ def cmd_kql(a) -> int:
 
     s = load(a.tenant)
     text = Path(a.file).read_text() if a.file else a.query
-    rows = kql.run(text, s.tables, s.now)
+    try:
+        rows = kql.run(text, s.tables, s.now)
+    except kql.KqlError as e:
+        print(f"kql error: {e}", file=sys.stderr)
+        return 2
     print(f"{len(rows)} row(s)")
     for r in rows[: a.limit]:
         print(
