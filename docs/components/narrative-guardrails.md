@@ -150,7 +150,7 @@ In Azure, the Foundry call uses Entra ID authentication and no API keys.
 ## 12. Observability
 
 Per narrative: fallback used, injection obeyed, estimated prompt tokens. The learning run used about
-17,243 prompt tokens across 37 narratives (see `aisoc metrics`); with a real model this is the cost meter.
+17,236 prompt tokens across 37 narratives (see `aisoc metrics`); with a real model this is the cost meter.
 
 ## 13. Failure modes
 
