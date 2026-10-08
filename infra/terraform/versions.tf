@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.50"
+      version = "~> 5.8"
     }
     # Only for the Logic App's Microsoft Sentinel API connection with managed-identity auth
     # (parameterValueType "Alternative"), which azurerm_api_connection cannot express.
