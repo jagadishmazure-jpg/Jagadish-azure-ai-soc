@@ -33,7 +33,7 @@ def _run(args):
     [
         ["tenants"], ["data", "--tenant", "pinecrest"], ["detect"], ["attack"], ["triage", "--tenant", "brightwater"],
         ["investigate", "--tenant", "orchidvalley", "--incident", "INC-OR-032"], ["metrics"], ["stories"], ["compare"], ["feedback"],
-        ["risk"], ["injection"], ["approvals"], ["audit", "--tenant", "brightwater", "--tamper"], ["rules-json", "--check"],
+        ["risk"], ["injection"], ["approvals"], ["mix"], ["audit", "--tenant", "brightwater", "--tamper"], ["rules-json", "--check"],
         ["kql", "--tenant", "brightwater", "--file", "detections/password-spray.kql"],
     ],
 )  # fmt: skip

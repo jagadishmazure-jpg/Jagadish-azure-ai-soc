@@ -10,6 +10,7 @@ aisoc attack [--layer FILE]           ATT&CK priority coverage (and a Navigator 
 aisoc metrics [--mode M]              detection, triage, investigation, guardrail and response metrics
 aisoc stories [--mode M]              per-story MTTD, tier, verdict and simulated MTTR
 aisoc compare                         baseline vs learning on the holdout window
+aisoc mix [--mode M]                  which techniques ran on each incident, by tier (agent and technique mesh)
 aisoc feedback                        what the feedback loop learned and the promotion gate result
 aisoc risk                            predictive risk evaluation
 aisoc injection                       prompt-injection what-if: guardrails on and off
@@ -266,6 +267,19 @@ def cmd_compare(a) -> int:
     ]
     print("holdout window (days 14-20), same incidents:")
     print(_table([[k, b[k], l_[k]] for k in keys], ["metric", "baseline (no learning)", "after feedback loop"]))
+    return 0
+
+
+def cmd_mix(a) -> int:
+    run = pipeline.run(a.mode)
+    s = metrics.mix_summary(run)
+    sizes = s["tier_sizes"]
+    print(f"mode {a.mode}: {s['incidents']} incidents across {len(run.tenants)} tenants; tier 1 {sizes[1]}, tier 2 {sizes[2]}, tier 3 {sizes[3]}")
+    rows = [[k, u[1], u[2], u[3], sum(u.values()), metrics.TECHNIQUES[k]] for k, u in s["usage"].items()]
+    print(_table(rows, ["technique", "tier 1", "tier 2", "tier 3", "total", "what it is"]))
+    print(f"{len(s['combinations'])} distinct combinations; most common:")
+    rows = [[len(tiers), ",".join(str(t) for t in sorted(set(tiers))), " + ".join(combo)] for combo, tiers in s["combinations"][: a.top]]
+    print(_table(rows, ["incidents", "tiers", "combination"]))
     return 0
 
 
@@ -538,6 +552,10 @@ def main(argv: list[str] | None = None) -> int:
         p = sub.add_parser(name)
         p.add_argument("--mode", **mode_kw)
         p.set_defaults(fn=fn)
+    p = sub.add_parser("mix")
+    p.add_argument("--mode", **mode_kw)
+    p.add_argument("--top", type=int, default=8)
+    p.set_defaults(fn=cmd_mix)
     for name, fn in (
         ("compare", cmd_compare),
         ("feedback", cmd_feedback),

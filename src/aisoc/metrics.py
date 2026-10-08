@@ -200,3 +200,58 @@ def summary(run: Run) -> dict:
 
 def window_label(case: Case) -> str:
     return window_of(case.incident)
+
+
+# What each technique label means, in pipeline order. Used by `technique_mix` and `aisoc mix`.
+TECHNIQUES = {
+    "kql-rule": "scheduled KQL analytics rule raised an alert (detections/)",
+    "product-alert": "Defender-style product alert raised an alert",
+    "logistic-score": "transparent logistic score over named features (triage.py)",
+    "attack-map": "alert mapped to MITRE ATT&CK techniques (attack.py)",
+    "threat-intel": "an active indicator matched and fed the score (intel.py)",
+    "ueba": "behaviour anomaly above zero fed the score (ueba.py)",
+    "case-notes": "earlier analyst case notes moved the score (knowledge.py)",
+    "tenant-context": "tenant facts explained every alert away (scanner, VPN, phish drill)",
+    "tool-investigation": "read-only tool calls built a timeline and scope (investigation.py)",
+    "llm-narrative": "language-model agent wrote the summary (llm.py)",
+    "human": "an analyst reviewed, or approvers decided, through request_info",
+}
+
+
+def technique_mix(case: Case) -> tuple[str, ...]:
+    """The techniques that actually ran on, or contributed to, one incident, in pipeline order.
+
+    This reports what happened; it does not choose anything. The mix differs per incident because the
+    fixed tier routing (routing.py) decides whether investigation and the language model run at all, and
+    because enrichment only counts when it finds something (an indicator hit, an anomaly, a case note)."""
+    inc = case.incident
+    used = {
+        "kql-rule": any(not a.product for a in inc.alerts),
+        "product-alert": any(a.product for a in inc.alerts),
+        "logistic-score": True,
+        "attack-map": bool(inc.techniques),
+        "threat-intel": bool(inc.ti_hits),
+        "ueba": any(x.score > 0 for x in inc.anomalies),
+        "case-notes": bool(inc.features.get("kb_benign") or inc.features.get("kb_malicious")),
+        "tenant-context": bool(inc.context),
+        "tool-investigation": case.investigation is not None and case.investigation.tool_calls > 0,
+        "llm-narrative": case.narrative is not None,
+        "human": case.decision is not None,
+    }
+    return tuple(k for k in TECHNIQUES if used[k])
+
+
+def mix_summary(run: Run) -> dict:
+    """Technique usage by tier and the distinct combinations seen across a run."""
+    cs = run.cases()
+    by_tier = {t: [c for c in cs if c.route and c.route.tier == t] for t in (1, 2, 3)}
+    usage = {k: {t: sum(k in technique_mix(c) for c in by_tier[t]) for t in (1, 2, 3)} for k in TECHNIQUES}
+    combos: dict[tuple[str, ...], list[int]] = {}
+    for c in cs:
+        combos.setdefault(technique_mix(c), []).append(c.route.tier if c.route else 0)
+    return {
+        "incidents": len(cs),
+        "tier_sizes": {t: len(v) for t, v in by_tier.items()},
+        "usage": usage,
+        "combinations": sorted(combos.items(), key=lambda kv: (-len(kv[1]), kv[0])),
+    }

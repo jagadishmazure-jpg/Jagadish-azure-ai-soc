@@ -60,3 +60,25 @@ def test_canary_never_leaves_its_tenant():
 def test_every_cross_tenant_attempt_is_denied():
     attempts = isolation.cross_tenant_attempts()
     assert len(attempts) == 8 and all(o.startswith("denied") for _, o in attempts)
+
+
+def test_technique_mix_follows_the_route(learning):
+    for c in learning.cases():
+        mix = metrics.technique_mix(c)
+        assert "logistic-score" in mix and set(mix) <= set(metrics.TECHNIQUES)
+        if c.route.tier == 1:
+            assert "tool-investigation" not in mix and "llm-narrative" not in mix
+        else:
+            assert {"tool-investigation", "llm-narrative", "human"} <= set(mix)
+
+
+def test_technique_mix_varies_and_the_model_is_not_called_for_every_incident(learning):
+    s = metrics.mix_summary(learning)
+    assert len(s["combinations"]) >= 5
+    llm = sum(s["usage"]["llm-narrative"].values())
+    assert 0 < llm < s["incidents"] and s["usage"]["llm-narrative"][1] == 0
+    assert sum(len(t) for _, t in s["combinations"]) == s["incidents"]
+
+
+def test_case_notes_never_contribute_without_the_feedback_loop(baseline):
+    assert sum(metrics.mix_summary(baseline)["usage"]["case-notes"].values()) == 0

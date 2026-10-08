@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- `docs/cognitive-soc-five-parts.md`: the five parts of a cognitive SOC explained and mapped to code with
+  rendered output, code excerpts and a Strong / Partial verdict per part; `aisoc mix` and
+  `metrics.technique_mix` report which techniques ran on each incident, by tier.
 - Repository settings: Dependabot alerts and security updates, private vulnerability reporting and a
   `main` ruleset; Dependabot updates are grouped per ecosystem.
 - Synthetic Sentinel and Defender XDR telemetry for a fictional MSSP and three tenants, with look-alikes and

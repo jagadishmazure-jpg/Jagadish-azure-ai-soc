@@ -34,6 +34,10 @@ flowchart LR
 
 ## Design principles behind the scenarios
 
+The five principles below are expanded, one section each, in
+[cognitive-soc-five-parts.md](cognitive-soc-five-parts.md): a plain-language explanation, the code and
+real output, an honest Strong / Partial verdict, what production would add, and interview talking points.
+
 | Principle (my wording) | How it shows up |
 |---|---|
 | Specialised agents that hand work to each other | Triage, investigation, narrative and response steps as nodes in one MAF workflow |

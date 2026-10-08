@@ -9,6 +9,7 @@ template; their outputs and code excerpts are rendered from the code and drift-c
 | `architecture.md` | System view, trust boundaries, component status, MAF usage, release gate |
 | `threat-model.md` | STRIDE, OWASP Top 10 for LLM Applications, MITRE ATLAS, residual risks |
 | `scenario-mapping.md` | The eight AI SOC scenarios mapped to code, in this repository's own words |
+| `cognitive-soc-five-parts.md` | The five parts of a cognitive SOC explained, mapped to code with real output, verdict per part |
 | `metrics.md` | Rendered comparison, per-story results and full run report, with caveats |
 | `mssp-operating-model.md` | Multi-tenant model, Lighthouse mapping, isolation evidence, onboarding |
 | `deployment.md` | One-time setup for the gated deployment (never run) |

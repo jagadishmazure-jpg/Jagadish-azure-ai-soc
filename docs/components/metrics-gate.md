@@ -112,6 +112,7 @@ def gate_checks() -> list[tuple[str, bool, str]]:
 ```bash
 aisoc metrics
 aisoc compare
+aisoc mix     # which techniques ran per incident, by tier (see ../cognitive-soc-five-parts.md)
 aisoc gate
 aisoc bench   # timings only; never rendered into docs
 ```

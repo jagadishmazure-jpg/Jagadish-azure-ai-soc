@@ -28,7 +28,7 @@ The `aisoc` package. Product modules never import `labels`, `analyst` or `metric
 | `analyst.py` | Simulated analysts and approvers (evaluation only) |
 | `feedback.py` | Feedback loop: notes, priors, thresholds |
 | `pipeline.py` | End-to-end runs, replay gate, holdout freeze |
-| `metrics.py` | Metric computation against ground truth |
+| `metrics.py` | Metric computation against ground truth; per-incident technique mix (`aisoc mix`) |
 | `risk.py` | Predictive risk ranking and evaluation |
 | `isolation.py` | Canary and cross-tenant checks |
 | `iac.py` | Read-only summaries of the IaC and workflows |

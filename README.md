@@ -32,7 +32,7 @@
 - **Terraform + Bicep** for the Sentinel workspace, rules, least-privilege managed identities, a
   managed-identity Logic App playbook and private networking. Validated, tested with mocked providers and
   checkov-clean; deployment is gated off.
-- **340 automated tests**, all offline, plus an eleven-check release gate and docs whose outputs and code
+- **344 automated tests**, all offline, plus an eleven-check release gate and docs whose outputs and code
   excerpts are regenerated and drift-checked in CI.
 
 **Skills demonstrated:** security operations (triage, investigation, containment, detection engineering),
@@ -51,7 +51,10 @@ The set of use cases this repository covers was shaped by an AI-powered SOC guid
 Technologies: [https://www.conifers.ai/blog/ai-powered-soc/](https://www.conifers.ai/blog/ai-powered-soc/).
 The guide is **not** included or redistributed here, and nothing in this repository copies its text. The
 scenario labels, design, code and wording are this repository's own; see
-[docs/scenario-mapping.md](docs/scenario-mapping.md).
+[docs/scenario-mapping.md](docs/scenario-mapping.md). How the repository covers the guide's five parts
+of a cognitive SOC (agentic architecture, institutional knowledge, adaptive learning, contextual analysis
+and human-AI collaboration), with real output and an honest verdict per part, is in
+[docs/cognitive-soc-five-parts.md](docs/cognitive-soc-five-parts.md).
 
 ## Quick start
 
@@ -61,6 +64,7 @@ pip install -e ".[dev]"
 pytest -q
 aisoc gate
 aisoc compare
+aisoc mix
 aisoc investigate --tenant orchidvalley --incident INC-OR-032
 aisoc injection
 ```
@@ -142,13 +146,14 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
 | `runbooks/` | One runbook per attack family |
 | `infra/` | Terraform and Bicep |
 | `docs/` | Architecture, threat model, scenario mapping, metrics, components, infra, guides, ADRs |
-| `tests/` | 340 tests |
+| `tests/` | 344 tests |
 
 ## Where to start
 
 - **Engineers:** [docs/architecture.md](docs/architecture.md), then the component docs in
   [docs/components/](docs/components/README.md) and [docs/threat-model.md](docs/threat-model.md).
-- **Recruiters and reviewers:** this page, [docs/metrics.md](docs/metrics.md) and
+- **Recruiters and reviewers:** this page, [docs/metrics.md](docs/metrics.md),
+  [docs/cognitive-soc-five-parts.md](docs/cognitive-soc-five-parts.md) and
   [docs/best-practices.md](docs/best-practices.md).
 - **Adopters:** [docs/implementation-guide.md](docs/implementation-guide.md),
   [docs/mssp-operating-model.md](docs/mssp-operating-model.md) and [docs/deployment.md](docs/deployment.md).
