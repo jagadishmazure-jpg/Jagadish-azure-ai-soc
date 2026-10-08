@@ -11,7 +11,7 @@ outside `00000000-` mocks are two public Azure built-in role definition IDs, all
 
 1. Open a private security advisory on GitHub (Security tab, "Report a vulnerability"). Include the file,
    the problem and how to reproduce it.
-2. If that button is not shown (private reporting is not switched on for this repo yet), open an issue
+2. If that button is not shown, open an issue
    titled `Security contact request` with no technical details, and I will reply with a private channel.
 
 I aim to acknowledge a report within 5 working days. This is a personal portfolio maintained by one person,
@@ -32,6 +32,7 @@ so there is no formal SLA or bug bounty.
 - **Supply chain:** SHA-pinned actions, Dependabot, CodeQL, gitleaks over full history, an SPDX SBOM,
   pinned Python dependencies, checkov (no skips) and tflint on Terraform.
 - **Deployment gated off** until `DEPLOY_ENABLED` is set; prod needs environment reviewers.
+- **GitHub settings:** secret scanning with push protection, Dependabot alerts and security updates, private vulnerability reporting, and a ruleset on `main` that blocks force-pushes and branch deletion and requires the CI checks before a pull request can merge. The maintainer (repository admin) can still push directly to `main`, so for direct pushes the checks run after the push rather than before it.
 
 See [docs/threat-model.md](docs/threat-model.md).
 

@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Repository settings: Dependabot alerts and security updates, private vulnerability reporting and a
+  `main` ruleset; Dependabot updates are grouped per ecosystem.
 - Synthetic Sentinel and Defender XDR telemetry for a fictional MSSP and three tenants, with look-alikes and
   nine attack stories; ground truth isolated from agent code.
 - Pure-Python KQL subset; twelve analytics rules as code with realistic alert timing; ATT&CK coverage and a

@@ -163,7 +163,10 @@ needs a typed confirmation. No long-lived cloud credential exists.
 
 ## 11. Security and governance
 
-Supply chain: SHA pins, Dependabot, CodeQL, gitleaks over full history, an SPDX SBOM per run, CODEOWNERS.
+Supply chain: SHA pins, Dependabot (weekly, grouped), CodeQL, gitleaks over full history, an SPDX SBOM per run, CODEOWNERS.
+Repository settings: secret scanning with push protection, Dependabot alerts and security updates, private
+vulnerability reporting, and a `main` ruleset that blocks force-push and deletion and requires the CI checks
+on pull requests (the admin can still push directly, so those checks run after a direct push).
 See [../../SECURITY.md](../../SECURITY.md).
 
 ## 12. Observability

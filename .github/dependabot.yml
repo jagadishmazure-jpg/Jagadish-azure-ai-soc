@@ -1,15 +1,25 @@
-# Weekly dependency updates. Actions are pinned to SHAs; Dependabot keeps the SHA and the version comment current.
+# Weekly, grouped dependency updates. Actions are pinned to SHAs; Dependabot keeps the SHA and the version comment current.
+# Security updates are switched on in the repository settings.
 version: 2
 updates:
   - package-ecosystem: pip
     directory: /
     schedule: { interval: weekly }
     open-pull-requests-limit: 5
+    groups:
+      python:
+        patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
     open-pull-requests-limit: 5
+    groups:
+      actions:
+        patterns: ["*"]
   - package-ecosystem: terraform
     directory: /infra/terraform
     schedule: { interval: weekly }
     open-pull-requests-limit: 5
+    groups:
+      terraform:
+        patterns: ["*"]
