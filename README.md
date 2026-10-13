@@ -159,6 +159,13 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
   [docs/mssp-operating-model.md](docs/mssp-operating-model.md) and [docs/deployment.md](docs/deployment.md).
 - **Interview prep:** [docs/interview-guide.md](docs/interview-guide.md).
 
+## Companions
+
+* [Jagadish-agent-identity-security](https://github.com/jagadishmazure-jpg/Jagadish-agent-identity-security) — who *can* do what (identity posture)
+* [Jagadish-agent-auth-security](https://github.com/jagadishmazure-jpg/Jagadish-agent-auth-security) — how a request proves who it is (JWT, sessions, OBO, MCP auth)
+* [Jagadish-ai-soc-assurance](https://github.com/jagadishmazure-jpg/Jagadish-ai-soc-assurance) — independent benchmarks and failure modes
+* This repo — what happened (alerts and triage)
+
 ## Independent assurance
 
 This system is the first system under test in
