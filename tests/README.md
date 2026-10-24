@@ -5,6 +5,7 @@ Offline tests: synthetic data, mock model, no Azure.
 | File | What it does |
 |---|---|
 | `conftest.py` | Session fixtures for the learning and baseline runs |
+| `test_php2shell.py` | PHP2Shell case study: precision, recall, look-alikes, inventory classifier, verdicts, approval gate |
 | `test_synth.py` | Determinism, fictional identities, stories, ground-truth separation |
 | `test_kql.py` | KQL operators, functions, joins and errors |
 | `test_detections.py` | Rule firing, alert timing, entities, rules.json |

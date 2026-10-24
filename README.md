@@ -32,7 +32,8 @@
 - **Terraform + Bicep** for the Sentinel workspace, rules, least-privilege managed identities, a
   managed-identity Logic App playbook and private networking. Validated, tested with mocked providers and
   checkov-clean; deployment is gated off.
-- **344 automated tests**, all offline, plus an eleven-check release gate and docs whose outputs and code
+- **Case study:** [PHP2Shell](docs/case-studies/php2shell.md), the critical PHP engine flaws, replayed through the agents on synthetic data: 6 of 6 attack stories detected, 0 false positives on 8 look-alike kinds, 30 of 30 PHP versions classified correctly, and 0 containment actions without human approval.
+- **388 automated tests**, all offline, plus an eleven-check release gate and docs whose outputs and code
   excerpts are regenerated and drift-checked in CI.
 
 **Skills demonstrated:** security operations (triage, investigation, containment, detection engineering),
@@ -146,7 +147,7 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
 | `runbooks/` | One runbook per attack family |
 | `infra/` | Terraform and Bicep |
 | `docs/` | Architecture, threat model, scenario mapping, metrics, components, infra, guides, ADRs |
-| `tests/` | 344 tests |
+| `tests/` | 388 tests |
 
 ## Where to start
 

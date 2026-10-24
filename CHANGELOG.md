@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- PHP2Shell case study (`docs/case-studies/`, `detections/php2shell/`, `aisoc.php2shell`, `aisoc php2shell`): synthetic
+  web and endpoint telemetry with look-alikes, five KQL rules, a PHP inventory classifier, recon / failed attempt /
+  compromise verdicts, a takedown vs patch decision record and an approval-gated dry-run plan; 44 new tests.
 - `docs/cognitive-soc-five-parts.md`: the five parts of a cognitive SOC explained and mapped to code with
   rendered output, code excerpts and a Strong / Partial verdict per part; `aisoc mix` and
   `metrics.technique_mix` report which techniques ran on each incident, by tier.

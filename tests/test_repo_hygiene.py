@@ -55,8 +55,12 @@ def test_folder_readmes_list_every_child():
             assert f"`{name}`" in text, f"{readme.relative_to(ROOT)} does not list {name}"
 
 
+# Case studies describe dated public events and cite dated URLs, so only they may carry dates.
+DATED = ROOT / "docs" / "case-studies"
+
+
 def test_no_dates_in_markdown():
-    for p in MD:
+    for p in (m for m in MD if DATED not in m.parents):
         t = re.sub(r"@\d{4}-\d{2}-\d{2}(-preview)?", "", p.read_text())
         assert not re.search(r"\b\d{4}-\d{2}-\d{2}\b", t), f"ISO date in {p}"
         assert not re.search(r"(?<![\w$,.])20[1-3]\d(?![\w,.%])", t), f"year in {p}"

@@ -1,0 +1,7 @@
+// Post-exploitation: a PHP or web-server worker writes or starts a program under /tmp.
+// PHP session files (sess_*) and upload temp files (php*) under /tmp are normal and excluded.
+let Workers = dynamic(["php", "php-fpm", "php-fpm8.4", "apache2", "httpd", "frankenphp"]);
+DeviceProcessEvents
+| where InitiatingProcessFileName in~ (Workers)
+| where FolderPath startswith "/tmp/" or ProcessCommandLine has "/tmp/"
+| project TimeGenerated, DeviceName, InitiatingProcessFileName, FileName, FolderPath, ProcessCommandLine, EventId

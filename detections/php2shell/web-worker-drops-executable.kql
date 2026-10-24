@@ -1,0 +1,7 @@
+// Post-exploitation: a web worker creates an executable file under /tmp (not a session or upload temp file).
+let Workers = dynamic(["php", "php-fpm", "php-fpm8.4", "apache2", "httpd", "frankenphp"]);
+DeviceFileEvents
+| where ActionType == "FileCreated" and InitiatingProcessFileName in~ (Workers)
+| where FolderPath startswith "/tmp/" and IsExecutable == true
+| where not(FileName startswith "sess_") and not(FileName startswith "php")
+| project TimeGenerated, DeviceName, InitiatingProcessFileName, FileName, FolderPath, SHA256, EventId
