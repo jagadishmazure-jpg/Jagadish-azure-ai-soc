@@ -27,6 +27,7 @@ The `aisoc` package. Product modules never import `labels`, `analyst` or `metric
 | `workflow.py` | MAF workflow with human checkpoints |
 | `analyst.py` | Simulated analysts and approvers (evaluation only) |
 | `feedback.py` | Feedback loop: notes, priors, thresholds |
+| `php2shell.py` | PHP2Shell case study: telemetry, rules run, inventory check, triage, approval-gated plan |
 | `pipeline.py` | End-to-end runs, replay gate, holdout freeze |
 | `metrics.py` | Metric computation against ground truth; per-incident technique mix (`aisoc mix`) |
 | `risk.py` | Predictive risk ranking and evaluation |

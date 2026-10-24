@@ -1,0 +1,7 @@
+// Reconnaissance: one source fingerprints the PHP version across many paths in a short window.
+// The authorised internal scanner is excluded by its private source range.
+W3CIISLog
+| where csMethod == "GET" and not(cIP startswith "10.")
+| summarize Paths = dcount(csUriStem), Hosts = dcount(sComputerName), EventIds = make_set(EventId) by cIP, bin(TimeGenerated, 10m)
+| where Paths >= 8
+| project TimeGenerated, cIP, Paths, Hosts, EventIds

@@ -1,0 +1,8 @@
+// PHP2Shell delivery: an oversized multipart POST that carries the session upload-progress field to a
+// route that takes no uploads. Routes that really accept uploads are allowlisted.
+let UploadRoutes = dynamic(["/upload.php", "/media/upload", "/wp-admin/async-upload.php"]);
+W3CIISLog
+| where csMethod == "POST" and ContentType startswith "multipart/form-data"
+| where HasUploadProgressField == true
+| where not(csUriStem in~ (UploadRoutes))
+| project TimeGenerated, sComputerName, cIP, csUriStem, csUserAgent, csBytes, scStatus, EventId

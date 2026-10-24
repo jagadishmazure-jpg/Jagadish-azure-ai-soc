@@ -1,0 +1,5 @@
+// Command and control: a program running from /tmp opens an outbound connection to a public address.
+DeviceNetworkEvents
+| where InitiatingProcessFolderPath startswith "/tmp/"
+| where not(RemoteIP startswith "10.") and not(RemoteIP startswith "192.168.")
+| project TimeGenerated, DeviceName, InitiatingProcessFileName, InitiatingProcessFolderPath, RemoteIP, RemotePort, EventId

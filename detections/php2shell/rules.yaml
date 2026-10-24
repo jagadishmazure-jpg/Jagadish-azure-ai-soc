@@ -1,0 +1,9 @@
+# PHP2Shell case-study rules (CVE-2026-109618, CVE-2026-109619). They run over the case-study telemetry
+# (aisoc.php2shell) through the same KQL interpreter as the main rules. They are not in detections/rules.json,
+# so Terraform and Bicep do not deploy them yet (planned).
+rules:
+  - { id: php2shell-probe, file: multipart-upload-progress-probe.kql, severity: High, stage: delivery, technique: T1190, host: sComputerName }
+  - { id: php-version-scan, file: version-fingerprint-scan.kql, severity: Low, stage: recon, technique: T1595.002, host: null }
+  - { id: web-worker-runs-from-tmp, file: web-worker-runs-from-tmp.kql, severity: High, stage: execution, technique: T1059.004, host: DeviceName }
+  - { id: web-worker-drops-executable, file: web-worker-drops-executable.kql, severity: High, stage: execution, technique: T1105, host: DeviceName }
+  - { id: tmp-binary-outbound, file: tmp-binary-outbound.kql, severity: High, stage: c2, technique: T1071.001, host: DeviceName }

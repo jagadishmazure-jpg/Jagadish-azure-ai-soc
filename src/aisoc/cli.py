@@ -514,6 +514,13 @@ def cmd_mcp_demo(a) -> int:
     return 0
 
 
+def cmd_php2shell(a) -> int:
+    from aisoc import php2shell
+
+    print(php2shell.report())
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     _quiet()
     ap = argparse.ArgumentParser(prog="aisoc", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -521,6 +528,7 @@ def main(argv: list[str] | None = None) -> int:
     tenant_kw = {"choices": ["brightwater", "orchidvalley", "pinecrest"]}
     mode_kw = {"choices": ["baseline", "learning"], "default": "learning"}
     sub.add_parser("tenants").set_defaults(fn=cmd_tenants)
+    sub.add_parser("php2shell", help="PHP2Shell case study: detect, triage, inventory, approval-gated plan").set_defaults(fn=cmd_php2shell)
     p = sub.add_parser("data")
     p.add_argument("--tenant", **tenant_kw)
     p.set_defaults(fn=cmd_data)

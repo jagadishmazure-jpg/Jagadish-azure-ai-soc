@@ -16,6 +16,7 @@ template; their outputs and code excerpts are rendered from the code and drift-c
 | `implementation-guide.md` | Adopt this: what to keep, what to replace, phased rollout |
 | `best-practices.md` | Practices applied and the built vs written vs planned list |
 | `interview-guide.md` | Walkthrough, likely questions, numbers, caveats |
+| `case-studies/` | Real-world incidents replayed through the agents on synthetic data |
 | `components/` | Fourteen component docs |
 | `infra/` | Workspace, playbook, Terraform, Bicep and workflow docs |
 | `adr/` | Architecture decision records |
