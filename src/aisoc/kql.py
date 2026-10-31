@@ -122,6 +122,15 @@ def _ipv4_in_range(ip: Any, cidr: Any) -> bool:
         return False  # KQL returns null for a non-IPv4 value; null is falsy in a where clause
 
 
+def _parse_url(u: Any) -> dict[str, Any]:
+    from urllib.parse import urlsplit
+
+    if not u:
+        return {}
+    p = urlsplit(str(u))
+    return {"Scheme": p.scheme, "Host": p.hostname or "", "Path": p.path, "Port": str(p.port or "")}
+
+
 FUNCS: dict[str, Callable[..., Any]] = {
     "tolower": lambda s: None if s is None else str(s).lower(),
     "toupper": lambda s: None if s is None else str(s).upper(),
@@ -136,7 +145,7 @@ FUNCS: dict[str, Callable[..., Any]] = {
     "array_length": lambda xs: len(xs) if isinstance(xs, list) else None,
     "bin": _bin,
     "startofday": lambda t: _bin(t, timedelta(days=1)),
-    "parse_url": lambda u: _parse_url(u),
+    "parse_url": _parse_url,
     "ipv4_is_in_range": _ipv4_in_range,
 }
 AGGS = {"count", "countif", "dcount", "sum", "min", "max", "avg", "make_set", "take_any"}
@@ -579,15 +588,6 @@ class Parser:
             let = self.lets[name]
             return lambda r, e: let(r, e)
         return lambda r, e: r.get(name)
-
-
-def _parse_url(u: Any) -> dict[str, Any]:
-    from urllib.parse import urlsplit
-
-    if not u:
-        return {}
-    p = urlsplit(str(u))
-    return {"Scheme": p.scheme, "Host": p.hostname or "", "Path": p.path, "Port": str(p.port or "")}
 
 
 def _hashable(v: Any) -> Any:
