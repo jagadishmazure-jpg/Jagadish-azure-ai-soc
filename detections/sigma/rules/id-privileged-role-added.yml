@@ -1,0 +1,17 @@
+title: User added to a highly privileged directory role
+id: 751a9485-459f-5429-9434-16859fb393de
+status: experimental
+description: A user is added to a top directory role outside the privileged-access workflow.
+author: Jagadish Meduri
+tags: [attack.persistence, attack.privilege-escalation, attack.t1098.003]
+logsource: { product: azure, service: auditlogs }
+detection:
+  selection:
+    ActivityDisplayName: 'Add member to role'
+    TargetRole: ['Global Administrator', 'Privileged Role Administrator', 'Security Administrator']
+    Result: success
+  filter_pim:
+    InitiatedBy|endswith: '@pim.halyard.example'
+  condition: selection and not filter_pim
+falsepositives: [Emergency changes made by hand during an incident]
+level: high

@@ -1,0 +1,15 @@
+title: PowerShell started with an encoded command
+id: 1017c633-d09a-5fa9-b279-a8cf7ae0a2b4
+status: experimental
+description: PowerShell runs a base64-encoded command, a common way to hide what a script does.
+author: Jagadish Meduri
+tags: [attack.execution, attack.t1059.001, attack.defense-evasion, attack.t1027]
+logsource: { product: windows, category: process_creation }
+detection:
+  selection_img:
+    Image|endswith: ['\powershell.exe', '\pwsh.exe']
+  selection_flag:
+    CommandLine|contains: [' -enc ', ' -encodedcommand ', ' -ec ']
+  condition: selection_img and selection_flag
+falsepositives: [Management agents that wrap scripts in encoded commands]
+level: medium

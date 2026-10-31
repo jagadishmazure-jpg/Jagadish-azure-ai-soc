@@ -22,6 +22,14 @@ SUFFIXES = {".md", ".py", ".json", ".yml", ".yaml", ".tf", ".bicep", ".hcl", ".s
 TEXT_FILES = [p for p in ROOT.rglob("*") if p.is_file() and not SKIP_PARTS & set(p.parts) and p.suffix in SUFFIXES]
 # Public Azure built-in role definition IDs (identical in every tenant), used in infra/bicep/modules/identity.bicep.
 BUILT_IN_ROLE_IDS = {"3e150937-b8fe-4cfb-8069-0eaf05ecd056", "8d289c81-5878-46d4-8554-54e1e3d8b5cb"}
+# Sigma rule ids are UUIDs by the Sigma spec; they may appear in the rules and in the doc that excerpts one.
+SIGMA_RULE_IDS = {
+    line.split(":", 1)[1].strip().lower()
+    for p in (ROOT / "detections/sigma/rules").glob("*.yml")
+    for line in p.read_text().splitlines()
+    if line.startswith("id:")
+}
+SIGMA_ID_FILES = {ROOT / "docs/components/sigma-detections.md"}
 GUIDE_LINK = "https://www.conifers.ai/blog/ai-powered-soc/"
 
 
@@ -77,7 +85,7 @@ def test_no_todos_or_placeholders():
 
 def test_full_doc_set_exists():
     names = {p.relative_to(ROOT / "docs").as_posix() for p in FULL_DOCS}
-    assert len([n for n in names if n.startswith("components/")]) == 14
+    assert len([n for n in names if n.startswith("components/")]) == 15
     assert len([n for n in names if n.startswith("infra/")]) == 5
     for top in (
         "architecture", "threat-model", "scenario-mapping", "metrics", "mssp-operating-model", "deployment",
@@ -120,6 +128,8 @@ def test_no_secrets_or_real_identifiers():
         t = p.read_text(errors="ignore")
         found = {m.group(0).lower() for m in guid.finditer(t)}
         allowed = BUILT_IN_ROLE_IDS if p.name in {"identity.bicep", "test_iac.py"} else set()
+        if p.parent == ROOT / "detections/sigma/rules" or p in SIGMA_ID_FILES:
+            allowed = SIGMA_RULE_IDS
         assert found <= allowed, f"GUID-like identifier in {p}: {sorted(found - allowed)}"
         for b in bad:
             assert not b.search(t), f"{b.pattern} in {p}"
@@ -168,9 +178,9 @@ def test_changelog_has_only_unreleased():
     assert versions == ["Unreleased"]
 
 
-def test_six_adrs_without_date_lines():
+def test_seven_adrs_without_date_lines():
     adrs = sorted((ROOT / "docs/adr").glob("0*.md"))
-    assert len(adrs) == 6
+    assert len(adrs) == 7
     for a in adrs:
         t = a.read_text()
         assert "**Status:**" in t and "Date" not in t

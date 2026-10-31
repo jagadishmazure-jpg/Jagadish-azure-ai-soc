@@ -10,3 +10,4 @@ Architecture decision records. Each has a status and the context, decision and c
 | `0004-human-approval-bound-to-digest.md` | Approvals bound to plan digest, TTL, dual control, dry run |
 | `0005-earned-autonomy-with-replay-gate.md` | Per-detector, per-tenant thresholds behind a replay gate |
 | `0006-dual-iac-gated-deploy.md` | Terraform and Bicep from one rules file; deployment gated off |
+| `0007-sigma-source-ocsf-contract.md` | Sigma rules, an explicit Sigma -> OCSF mapping, and SQL / KQL parity as a gate |

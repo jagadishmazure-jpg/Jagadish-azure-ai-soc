@@ -17,7 +17,7 @@ flowchart LR
    through read-only tools, a cited timeline, a four-action plan waiting for the customer's approval.
 4. `aisoc injection`: a phishing subject tells the AI to close the case; quoting stops it, and with quoting
    off the validator catches it.
-5. `aisoc gate`: eleven checks that fail the build.
+5. `aisoc gate`: twelve checks that fail the build.
 
 ## Likely questions
 

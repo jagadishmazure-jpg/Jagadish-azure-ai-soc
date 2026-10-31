@@ -1,0 +1,15 @@
+title: DNS query with a very long random-looking label
+id: 569f2095-9ece-5d2d-8966-91dd3888e824
+status: experimental
+description: A DNS name with a label of 40 or more letters and digits, a sign of data hidden in DNS (tunnelling).
+author: Jagadish Meduri
+tags: [attack.command-and-control, attack.t1071.004, attack.exfiltration, attack.t1048]
+logsource: { category: dns }
+detection:
+  selection:
+    query|re: '^[a-z0-9]{40,}\.'
+  filter_known:
+    query|endswith: '.cdn.halyard.example'
+  condition: selection and not filter_known
+falsepositives: [Content delivery networks that put hashes in host names]
+level: medium

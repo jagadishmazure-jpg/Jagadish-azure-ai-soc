@@ -31,7 +31,7 @@ flowchart LR
 | Area | Built | Written, not run | Planned |
 |---|---|---|---|
 | Data | Synthetic tenants and stories | | Replay of real, anonymised incidents |
-| Detection | 12 KQL rules, product alerts, coverage 11/21 | Sentinel rules in Terraform and Bicep (disabled) | Kusto emulator cross-check; rules for T1486 and nine other gaps; automated hunting |
+| Detection | 12 KQL rules, product alerts, coverage 11/21; 19 Sigma rules with OCSF mapping, fixtures and SQL / KQL parity | Sentinel rules in Terraform and Bicep (disabled) | Kusto emulator cross-check; rules for T1486 and nine other gaps; automated hunting |
 | Triage and routing | Dedupe, correlation, scoring, tiers | | Learned weights |
 | Investigation | Template pivots, timeline, scope | | Wider dynamic lookback |
 | Tools | Local gateway and MCP server | | Connection to the hosted Sentinel MCP server |

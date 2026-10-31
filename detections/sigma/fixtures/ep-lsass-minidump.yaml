@@ -1,0 +1,91 @@
+# Positive (match) and negative (no_match) OCSF events for rules/ep-lsass-minidump.yml. Synthetic.
+rule: ep-lsass-minidump
+events:
+- expect: match
+  note: comsvcs MiniDump via rundll32
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-lsa-p1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\rundll32.exe
+      cmd_line: rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump 712 C:\Temp\l.dmp full
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: match
+  note: procdump on lsass
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-lsa-p2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Tools\procdump64.exe
+      cmd_line: procdump64.exe -accepteula -ma lsass.exe C:\Temp\out.dmp
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: procdump on a different process
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-lsa-n1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Tools\procdump64.exe
+      cmd_line: procdump64.exe -ma app.exe C:\Temp\app.dmp
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: comsvcs without MiniDump
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-lsa-n2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\regsvr32.exe
+      cmd_line: regsvr32.exe /s comsvcs.dll
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142

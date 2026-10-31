@@ -150,7 +150,16 @@ def test_workflow_hardening(name):
 
 def test_ci_runs_tests_gate_and_drift_checks():
     text = (WF / "ci.yml").read_text()
-    for step in ("pytest -q", "aisoc gate", "rules-json --check", "render_docs.py --check", "gitleaks", "sbom-action", "bicep build"):
+    for step in (
+        "pytest -q",
+        "aisoc gate",
+        "rules-json --check",
+        "aisoc sigma test",
+        "render_docs.py --check",
+        "gitleaks",
+        "sbom-action",
+        "bicep build",
+    ):
         assert step in text, step
 
 

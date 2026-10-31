@@ -21,6 +21,8 @@ aisoc gate                            release gate (exit 1 on any failure)
 aisoc bench                           wall-clock timings (varies by machine; not used in doc checks)
 aisoc rules-json [--check]            write or check detections/rules.json for Terraform and Bicep
 aisoc iac --part P                    what the Terraform, Bicep, workflows and rules.json declare
+aisoc sigma list|mapping|test         Sigma rules, the Sigma -> OCSF field map, fixture and backend parity results
+aisoc sigma convert --rule R --backend sql|kql
 aisoc mcp --tenant T | mcp-demo
 """
 
@@ -444,7 +446,16 @@ def gate_checks() -> list[tuple[str, bool, str]]:
             f"dry-run {resp['actions_executed_dry_run']}, live {resp['actions_executed_live']}",
         ),
         ("detections/rules.json is current", _rules_current(), "aisoc rules-json --check"),
+        _sigma_check(),
     ]
+
+
+def _sigma_check() -> tuple[str, bool, str]:
+    from aisoc import sigma
+
+    res = sigma.check_all()
+    ok = sum(r.ok for r in res)
+    return ("Sigma rules pass their fixtures; evaluator, SQL and KQL agree", ok == len(res), f"{ok}/{len(res)} rules")
 
 
 def _rules_current() -> bool:
@@ -512,6 +523,78 @@ def cmd_mcp_demo(a) -> int:
 
     print("\n".join(asyncio.run(demo())))
     return 0
+
+
+def cmd_sigma(a) -> int:
+    from aisoc import sigma
+
+    mapping = sigma.load_mapping()
+    rules = sigma.load_rules(mapping)
+    if a.action == "list":
+        rows = [
+            [r.name, r.area, r.level, r.logsource.name, f"{r.logsource.class_uid} {r.logsource.class_name}", " ".join(r.attack + r.atlas)]
+            for r in rules
+        ]
+        print(_table(rows, ["rule", "area", "level", "logsource", "OCSF class", "ATT&CK / ATLAS"]))
+        areas = Counter(r.area for r in rules)
+        print(f"{len(rules)} rules: " + ", ".join(f"{k} {v}" for k, v in sorted(areas.items())))
+        return 0
+    if a.action == "mapping":
+        rows = [
+            [ls.name, f, m.ocsf, "core" if m.core else "extension", "yes" if m.values else ""]
+            for ls in mapping.logsources
+            for f, m in ls.fields.items()
+        ]
+        print(_table(rows, ["logsource", "Sigma field", "OCSF path", "kind", "value map"]))
+        used = {m.field.sigma for r in rules for m in _matches(r.tree)}
+        ext = sum(not m.core for ls in mapping.logsources for m in ls.fields.values())
+        print(f"{len(rows)} mapped fields in {len(mapping.logsources)} logsources ({ext} extension); {len(used)} distinct Sigma fields used by rules")
+        return 0
+    if a.action == "test":
+        res = sigma.check_all(rules, mapping)
+        rows = [
+            [
+                r.rule.name,
+                r.positives,
+                r.negatives,
+                "PASS" if not r.failures else "FAIL",
+                len(r.evaluator),
+                len(r.sql),
+                len(r.kql),
+                "yes" if r.parity else "NO",
+            ]
+            for r in res
+        ]
+        print(_table(rows, ["rule", "pos", "neg", "fixtures", "eval hits", "SQL hits", "KQL hits", "parity"]))
+        for r in res:
+            for f in r.failures:
+                print(f"  FAIL {r.rule.name}: {f}")
+            if not r.parity:
+                print(f"  PARITY {r.rule.name}: eval {sorted(r.evaluator)} sql {sorted(r.sql)} kql {sorted(r.kql)}")
+        ok = sum(r.ok for r in res)
+        n_fx = sum(r.positives + r.negatives for r in res)
+        print(
+            f"sigma: {'PASS' if ok == len(res) else 'FAIL'} ({ok}/{len(res)} rules, {n_fx} fixture events, each rule run over all {n_fx} in 3 engines)"
+        )
+        return 0 if ok == len(res) else 1
+    if not a.rule:
+        print("convert needs --rule NAME (see: aisoc sigma list)")
+        return 2
+    rule = sigma.get_rule(a.rule, rules)
+    print(sigma.to_sql(rule) if a.backend == "sql" else sigma.to_kql(rule))
+    return 0
+
+
+def _matches(node):
+    from aisoc import sigma
+
+    if isinstance(node, sigma.Match):
+        yield node
+    elif isinstance(node, sigma.Not):
+        yield from _matches(node.item)
+    else:
+        for x in node.items:
+            yield from _matches(x)
 
 
 def cmd_php2shell(a) -> int:
@@ -586,6 +669,11 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("rules-json")
     p.add_argument("--check", action="store_true")
     p.set_defaults(fn=cmd_rules_json)
+    p = sub.add_parser("sigma")
+    p.add_argument("action", choices=["list", "mapping", "test", "convert"])
+    p.add_argument("--rule")
+    p.add_argument("--backend", choices=["sql", "kql"], default="kql")
+    p.set_defaults(fn=cmd_sigma)
     p = sub.add_parser("mcp")
     p.add_argument("--tenant", default="brightwater", **tenant_kw)
     p.set_defaults(fn=cmd_mcp)

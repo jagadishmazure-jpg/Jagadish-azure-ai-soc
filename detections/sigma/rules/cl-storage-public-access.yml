@@ -1,0 +1,14 @@
+title: Storage account opened to anonymous blob access
+id: 9b2d4494-6812-5adc-af38-6737c8d74edc
+status: experimental
+description: A storage account write turns on public blob access, which can expose data to anyone with the URL.
+author: Jagadish Meduri
+tags: [attack.collection, attack.t1530]
+logsource: { product: azure, service: activitylogs }
+detection:
+  selection:
+    OperationNameValue: 'MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE'
+    Properties|contains: '"allowBlobPublicAccess":true'
+  condition: selection
+falsepositives: [Static website hosting accounts, which should be tagged and excluded]
+level: medium

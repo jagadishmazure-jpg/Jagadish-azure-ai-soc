@@ -2,7 +2,7 @@
 
 Every number in this repository is computed from a run against labelled ground truth; nothing is typed
 in. The metrics cover detection, response, triage quality, investigation, guardrails, risk and ATT&CK
-coverage. The release gate turns the critical ones into eleven pass or fail checks that CI runs.
+coverage. The release gate turns the critical ones into twelve pass or fail checks that CI runs.
 
 Sections: [1. Purpose](#1-purpose) · [2. Architecture](#2-architecture) · [3. How it works](#3-how-it-works) · [4. Key files](#4-key-files) · [5. Code excerpts](#5-code-excerpts) · [6. Configuration](#6-configuration) · [7. Commands](#7-commands) · [8. Real output](#8-real-output) · [9. Tests and gates](#9-tests-and-gates) · [10. Guardrails](#10-guardrails) · [11. Security and governance](#11-security-and-governance) · [12. Observability](#12-observability) · [13. Failure modes](#13-failure-modes) · [14. Mapping to Azure services](#14-mapping-to-azure-services) · [15. Limitations](#15-limitations) · [16. Interview talking points](#16-interview-talking-points)
 
@@ -21,7 +21,7 @@ flowchart LR
   P2[pipeline.run baseline] --> M
   L[aisoc.labels] --> M
   M --> CLI[aisoc metrics, stories, compare]
-  M --> G[aisoc gate: 11 checks]
+  M --> G[aisoc gate: 12 checks]
   ISO[isolation checks] --> G
   AUD[audit verify] --> G
   RJ[rules-json --check] --> G
@@ -99,6 +99,7 @@ def gate_checks() -> list[tuple[str, bool, str]]:
             f"dry-run {resp['actions_executed_dry_run']}, live {resp['actions_executed_live']}",
         ),
         ("detections/rules.json is current", _rules_current(), "aisoc rules-json --check"),
+        _sigma_check(),
     ]
 ```
 <!-- /code -->
@@ -207,7 +208,8 @@ response:
   PASS  audit chains verify (264 records verified; 268 records verified; 281 records verified)
   PASS  no live containment (dry-run 27, live 0)
   PASS  detections/rules.json is current (aisoc rules-json --check)
-gate: PASS (11/11)
+  PASS  Sigma rules pass their fixtures; evaluator, SQL and KQL agree (19/19 rules)
+gate: PASS (12/12)
 ```
 <!-- /output -->
 

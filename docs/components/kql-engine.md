@@ -94,7 +94,8 @@ accounts every few days. The last row is the real spray. Telling these apart is 
 `tests/test_kql.py` covers 20 filter forms (`==`, `=~`, `in~`, `!in~`, `has`, `!has`, `contains`,
 `startswith`, `endswith`, `has_any`, `ago`, `not`, `isempty`, `take`, `limit`, `distinct`), `summarize`
 with `bin` and aggregates, `join` in both key syntaxes, `extend` with `parse_url`, `let` with `order` and
-`top`, string functions, `count`, and five unsupported forms that must raise `KqlError`
+`top`, string functions, `count`, `matches regex` (case-sensitive, null-safe) and `ipv4_is_in_range`
+(used by the Sigma KQL backend), and five unsupported forms that must raise `KqlError`
 (`mv-expand`, unknown functions, `evaluate`, an incomplete comparison, `invoke`). Every detection in
 `tests/test_detections.py` also runs through this engine.
 
@@ -135,7 +136,8 @@ parameters and row count; refused queries are `tool.denied` records.
 
 ## 15. Limitations
 
-* A subset only: no `mv-expand`, `make-series`, `materialize`, regex functions or time-series operators.
+* A subset only: no `mv-expand`, `make-series`, `materialize`, `extract` or other regex functions (only
+  the `matches regex` operator), or time-series operators. `matches regex` runs Python `re`, not RE2.
 * Not yet cross-checked against the Kusto emulator; that is the next step before enabling rules.
 * Columns follow the simplified schema, so deployed rules need the column mapping in
   [../infra/sentinel-workspace.md](../infra/sentinel-workspace.md).

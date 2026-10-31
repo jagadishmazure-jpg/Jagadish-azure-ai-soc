@@ -1,0 +1,83 @@
+# Positive (match) and negative (no_match) OCSF events for rules/cl-diagnostic-setting-deleted.yml. Synthetic.
+rule: cl-diagnostic-setting-deleted
+events:
+- expect: match
+  note: diagnostic setting deleted
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-diag-p1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.INSIGHTS/DIAGNOSTICSETTINGS/DELETE
+      service:
+        name: MICROSOFT.INSIGHTS
+      request:
+        data: '{}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: match
+  note: lower-case operation, Success status
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-diag-p2
+      product:
+        name: Azure Activity
+    api:
+      operation: microsoft.insights/diagnosticSettings/delete
+      service:
+        name: microsoft.insights
+      request:
+        data: '{}'
+    status: Success
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: delete failed
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-diag-n1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.INSIGHTS/DIAGNOSTICSETTINGS/DELETE
+      service:
+        name: MICROSOFT.INSIGHTS
+      request:
+        data: '{}'
+    status: Failed
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: diagnostic setting written
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-diag-n2
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.INSIGHTS/DIAGNOSTICSETTINGS/WRITE
+      service:
+        name: MICROSOFT.INSIGHTS
+      request:
+        data: '{}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23

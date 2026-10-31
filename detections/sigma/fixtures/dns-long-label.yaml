@@ -1,0 +1,55 @@
+# Positive (match) and negative (no_match) OCSF events for rules/dns-long-label.yml. Synthetic.
+rule: dns-long-label
+events:
+- expect: match
+  note: 48-character label
+  event:
+    class_uid: 4003
+    metadata:
+      uid: dns-long-p1
+      product:
+        name: Resolver Logs
+    query:
+      hostname: mzxw6ytboi2dcmrtgq3tmnzyhe4dsmbrgiztinjwg4ydsmbr.t.exfil-relay.example
+      type: TXT
+    src_endpoint:
+      ip: 10.20.4.17
+- expect: no_match
+  note: normal name
+  event:
+    class_uid: 4003
+    metadata:
+      uid: dns-long-n1
+      product:
+        name: Resolver Logs
+    query:
+      hostname: portal.pinecrest.example
+      type: A
+    src_endpoint:
+      ip: 10.20.4.17
+- expect: no_match
+  note: long hash label on the known CDN (filtered)
+  event:
+    class_uid: 4003
+    metadata:
+      uid: dns-long-n2
+      product:
+        name: Resolver Logs
+    query:
+      hostname: a3f9c2e81b7d4f6a9c0e2b4d6f8a1c3e5b7d9f0a2c4e.cdn.halyard.example
+      type: A
+    src_endpoint:
+      ip: 10.20.4.17
+- expect: no_match
+  note: 39 characters, one short of the limit
+  event:
+    class_uid: 4003
+    metadata:
+      uid: dns-long-n3
+      product:
+        name: Resolver Logs
+    query:
+      hostname: abcdefghijabcdefghijabcdefghijabcdefghi.relay.example
+      type: A
+    src_endpoint:
+      ip: 10.20.4.17

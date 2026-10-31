@@ -26,6 +26,8 @@ jobs:
         run: |
           mkdir -p evidence
           aisoc gate | tee evidence/gate.txt
+      - name: Sigma rules pass their fixtures; evaluator, SQL and KQL agree
+        run: aisoc sigma test | tee evidence/sigma.txt
       - name: detections/rules.json matches the rules (Terraform and Bicep read it)
         run: aisoc rules-json --check
       - name: Doc outputs and code excerpts match a fresh run

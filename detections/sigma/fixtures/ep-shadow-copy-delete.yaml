@@ -1,0 +1,91 @@
+# Positive (match) and negative (no_match) OCSF events for rules/ep-shadow-copy-delete.yml. Synthetic.
+rule: ep-shadow-copy-delete
+events:
+- expect: match
+  note: vssadmin delete
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-vss-p1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\vssadmin.exe
+      cmd_line: vssadmin.exe Delete Shadows /All /Quiet
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: match
+  note: wmic delete
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-vss-p2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\wbem\WMIC.exe
+      cmd_line: wmic shadowcopy delete /nointeractive
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: vssadmin list
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-vss-n1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\vssadmin.exe
+      cmd_line: vssadmin.exe list shadows
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: wmic lists shadow copies
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-vss-n2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\wbem\WMIC.exe
+      cmd_line: wmic shadowcopy list brief
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142

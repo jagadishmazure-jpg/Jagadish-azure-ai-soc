@@ -1,0 +1,16 @@
+title: Agent query tool returns a very large result
+id: d3024773-51e1-5a51-b9e4-e36ef502de22
+status: experimental
+description: An AI agent's query or export tool returns 10,000 rows or more, far beyond what an answer needs.
+author: Jagadish Meduri
+tags: [attack.collection, attack.t1213, atlas.aml.t0086]
+logsource: { product: ai_agent, category: tool_call }
+detection:
+  selection:
+    ToolName: ['sql_query', 'run_query', 'export_table']
+    ResultRows|gte: 10000
+  filter_report:
+    AgentName: 'nightly-report-agent'
+  condition: selection and not filter_report
+falsepositives: [Reporting agents, which are filtered by name]
+level: medium

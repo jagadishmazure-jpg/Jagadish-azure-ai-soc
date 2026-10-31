@@ -11,13 +11,15 @@ Supported:
         | order by / sort by x [asc|desc] | top N by x [asc|desc] | take N | limit N | distinct a, b | count
         | join kind=inner ( <query> ) on Col[, Col]  |  on $left.A == $right.B
   operators: and or not == != =~ !~ < <= > >= + - * /  has !has contains !contains startswith endswith has_any in !in in~ !in~
+             matches regex (Python `re` search; the Sigma backend only emits patterns valid in both re and RE2)
   functions: ago now bin tolower toupper strlen isempty isnotempty tostring toint todouble iff strcat array_length startofday
-             parse_url (with .Host / .Path member access)
+             ipv4_is_in_range parse_url (with .Host / .Path member access)
   aggregates: count countif dcount sum min max avg make_set take_any
 """
 
 from __future__ import annotations
 
+import ipaddress
 import re
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
@@ -111,6 +113,15 @@ def _bin(v: Any, size: Any) -> Any:
     return v - v % size
 
 
+def _ipv4_in_range(ip: Any, cidr: Any) -> bool:
+    if ip in (None, ""):
+        return False
+    try:
+        return ipaddress.IPv4Address(str(ip)) in ipaddress.IPv4Network(str(cidr), strict=False)
+    except ValueError:
+        return False  # KQL returns null for a non-IPv4 value; null is falsy in a where clause
+
+
 FUNCS: dict[str, Callable[..., Any]] = {
     "tolower": lambda s: None if s is None else str(s).lower(),
     "toupper": lambda s: None if s is None else str(s).upper(),
@@ -126,6 +137,7 @@ FUNCS: dict[str, Callable[..., Any]] = {
     "bin": _bin,
     "startofday": lambda t: _bin(t, timedelta(days=1)),
     "parse_url": lambda u: _parse_url(u),
+    "ipv4_is_in_range": _ipv4_in_range,
 }
 AGGS = {"count", "countif", "dcount", "sum", "min", "max", "avg", "make_set", "take_any"}
 
@@ -435,6 +447,16 @@ class Parser:
                 return not res if neg else res
 
             return test
+        if op == "matches" and self.peek().value.lower() == "regex":
+            self.next()
+            self.next()
+            pat = self.additive()
+
+            def regex(r, e):
+                v = left(r, e)
+                return v is not None and re.search(str(pat(r, e)), str(v)) is not None
+
+            return regex
         if op in ("in~", "!in~"):
             self.next()
             items = self.list_operand()

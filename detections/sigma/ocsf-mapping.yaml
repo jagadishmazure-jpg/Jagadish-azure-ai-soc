@@ -1,0 +1,113 @@
+# Sigma -> OCSF field mapping. This file is the contract between the Sigma rules and the event schema.
+#
+# Every Sigma field a rule uses must appear here for that rule's logsource, or compiling the rule fails
+# with SigmaMappingError (no silent pass-through of unknown fields). Fixture events may only use the OCSF
+# paths declared for their class, so a typo in a fixture fails too.
+#
+#   logsource   the Sigma logsource keys a rule must match exactly (product / category / service)
+#   class       OCSF event class (uid and name, OCSF 1.x)
+#   sql_table   table name used by the SQL backend (SQLite dialect, one column per dotted OCSF path)
+#   kql_table   table name used by the KQL backend (one column per OCSF path, dots -> underscores)
+#   filter      OCSF path -> value; added to every query for this logsource (which product wrote the event)
+#   fields      Sigma field -> OCSF path. `core: false` marks a field kept under `unmapped.*` because the
+#               OCSF class has no attribute for it. `values` maps Sigma values to OCSF values; any other
+#               value is an error, and only plain equality is allowed on such fields.
+logsources:
+  - name: windows-process-creation
+    logsource: { product: windows, category: process_creation }
+    class: { uid: 1007, name: Process Activity }
+    sql_table: ocsf_process_activity
+    kql_table: OcsfProcessActivity
+    filter: { metadata.product.name: Sysmon, activity_id: 1 }
+    fields:
+      Image: { ocsf: process.file.path }
+      CommandLine: { ocsf: process.cmd_line }
+      ProcessId: { ocsf: process.pid }
+      ParentImage: { ocsf: actor.process.file.path }
+      ParentCommandLine: { ocsf: actor.process.cmd_line }
+      User: { ocsf: actor.user.name }
+      Computer: { ocsf: device.hostname }
+
+  - name: windows-network-connection
+    logsource: { product: windows, category: network_connection }
+    class: { uid: 4001, name: Network Activity }
+    sql_table: ocsf_network_activity
+    kql_table: OcsfNetworkActivity
+    filter: { metadata.product.name: Sysmon }
+    fields:
+      Image: { ocsf: actor.process.file.path }
+      SourceIp: { ocsf: src_endpoint.ip }
+      DestinationIp: { ocsf: dst_endpoint.ip }
+      DestinationPort: { ocsf: dst_endpoint.port }
+      DestinationHostname: { ocsf: dst_endpoint.hostname }
+      Computer: { ocsf: device.hostname }
+
+  - name: dns
+    logsource: { category: dns }
+    class: { uid: 4003, name: DNS Activity }
+    sql_table: ocsf_dns_activity
+    kql_table: OcsfDnsActivity
+    filter: { metadata.product.name: Resolver Logs }
+    fields:
+      query: { ocsf: query.hostname }
+      record_type: { ocsf: query.type }
+      src_ip: { ocsf: src_endpoint.ip }
+
+  - name: azure-signin
+    logsource: { product: azure, service: signinlogs }
+    class: { uid: 3002, name: Authentication }
+    sql_table: ocsf_authentication
+    kql_table: OcsfAuthentication
+    filter: { metadata.product.name: Entra ID Sign-in }
+    fields:
+      UserPrincipalName: { ocsf: user.name }
+      IPAddress: { ocsf: src_endpoint.ip }
+      ResultType: { ocsf: status_code }
+      AppDisplayName: { ocsf: service.name }
+      ClientAppUsed: { ocsf: unmapped.ClientAppUsed, core: false }
+      AuthenticationRequirement:
+        ocsf: is_mfa
+        values: { singleFactorAuthentication: false, multiFactorAuthentication: true }
+
+  - name: azure-audit
+    logsource: { product: azure, service: auditlogs }
+    class: { uid: 3001, name: Account Change }
+    sql_table: ocsf_account_change
+    kql_table: OcsfAccountChange
+    filter: { metadata.product.name: Entra ID Audit }
+    fields:
+      ActivityDisplayName: { ocsf: activity_name }
+      InitiatedBy: { ocsf: actor.user.name }
+      TargetUser: { ocsf: user.name }
+      TargetRole: { ocsf: policy.name }
+      Result: { ocsf: status }
+
+  - name: azure-activity
+    logsource: { product: azure, service: activitylogs }
+    class: { uid: 6003, name: API Activity }
+    sql_table: ocsf_api_activity
+    kql_table: OcsfApiActivity
+    filter: { metadata.product.name: Azure Activity }
+    fields:
+      OperationNameValue: { ocsf: api.operation }
+      ResourceProviderValue: { ocsf: api.service.name }
+      ActivityStatusValue: { ocsf: status }
+      Caller: { ocsf: actor.user.name }
+      CallerIpAddress: { ocsf: src_endpoint.ip }
+      Properties: { ocsf: api.request.data }
+
+  # OCSF has no AI-agent class, so tool calls from the agent gateway are API Activity: the tool is the
+  # operation, the agent is the calling app. Only result_rows has no OCSF attribute.
+  - name: ai-agent-tool-call
+    logsource: { product: ai_agent, category: tool_call }
+    class: { uid: 6003, name: API Activity }
+    sql_table: ocsf_api_activity
+    kql_table: OcsfApiActivity
+    filter: { metadata.product.name: Agent Gateway }
+    fields:
+      ToolName: { ocsf: api.operation }
+      AgentName: { ocsf: actor.app_name }
+      SessionId: { ocsf: actor.session.uid }
+      ToolArguments: { ocsf: api.request.data }
+      ToolOutput: { ocsf: api.response.data }
+      ResultRows: { ocsf: unmapped.result_rows, core: false }

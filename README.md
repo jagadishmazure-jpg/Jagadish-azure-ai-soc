@@ -33,11 +33,15 @@
   managed-identity Logic App playbook and private networking. Validated, tested with mocked providers and
   checkov-clean; deployment is gated off.
 - **Case study:** [PHP2Shell](docs/case-studies/php2shell.md), the critical PHP engine flaws, replayed through the agents on synthetic data: 6 of 6 attack stories detected, 0 false positives on 8 look-alike kinds, 30 of 30 PHP versions classified correctly, and 0 containment actions without human approval.
-- **388 automated tests**, all offline, plus an eleven-check release gate and docs whose outputs and code
+- **Sigma detection-as-code:** [19 Sigma rules](docs/components/sigma-detections.md) for endpoint, identity,
+  cloud, network and AI-agent abuse, an explicit Sigma -> OCSF field mapping that fails on unknown fields,
+  77 synthetic match and no-match fixtures, and SQL and KQL backends that must return the same events as
+  the evaluator (19 of 19 rules agree, measured on synthetic events).
+- **488 automated tests**, all offline, plus a twelve-check release gate and docs whose outputs and code
   excerpts are regenerated and drift-checked in CI.
 
 **Skills demonstrated:** security operations (triage, investigation, containment, detection engineering),
-Microsoft Sentinel, Defender XDR, KQL, MITRE ATT&CK and ATLAS, threat intelligence, UEBA, agentic AI with
+Microsoft Sentinel, Defender XDR, KQL, Sigma, OCSF, SQL, MITRE ATT&CK and ATLAS, threat intelligence, UEBA, agentic AI with
 Microsoft Agent Framework and MCP, LLM security (OWASP Top 10 for LLM Applications), Microsoft Foundry,
 Entra ID managed identities, Azure Monitor, Terraform, Bicep, GitHub Actions (OIDC) and Python.
 
@@ -142,12 +146,12 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
 | Path | What it holds |
 |---|---|
 | `src/aisoc/` | Agents, workflow, gateway, MCP server, metrics, CLI |
-| `detections/` | KQL rules, metadata and the generated `rules.json` |
+| `detections/` | KQL rules, metadata, the generated `rules.json`, and Sigma rules with their OCSF mapping and fixtures |
 | `config/` | Tenants, identities, templates, actions, thresholds, ATT&CK priorities |
 | `runbooks/` | One runbook per attack family |
 | `infra/` | Terraform and Bicep |
 | `docs/` | Architecture, threat model, scenario mapping, metrics, components, infra, guides, ADRs |
-| `tests/` | 388 tests |
+| `tests/` | 488 tests |
 
 ## Where to start
 

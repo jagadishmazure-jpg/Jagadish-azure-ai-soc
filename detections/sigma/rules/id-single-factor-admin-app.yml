@@ -1,0 +1,17 @@
+title: Single-factor sign-in to an admin portal
+id: 36b7cf3a-532b-589f-b440-7a2b92d8f849
+status: experimental
+description: A successful sign-in to an admin portal without MFA, which policy should never allow.
+author: Jagadish Meduri
+tags: [attack.initial-access, attack.t1078.004, attack.defense-evasion, attack.t1556.006]
+logsource: { product: azure, service: signinlogs }
+detection:
+  selection:
+    AppDisplayName: ['Azure Portal', 'Microsoft Entra admin center', 'Azure Resource Manager']
+    AuthenticationRequirement: singleFactorAuthentication
+    ResultType: '0'
+  filter_breakglass:
+    UserPrincipalName|startswith: 'breakglass-'
+  condition: selection and not filter_breakglass
+falsepositives: [Break-glass accounts, which are filtered and alerted on separately]
+level: high

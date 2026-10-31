@@ -18,3 +18,4 @@ Component docs. Each follows the 16-section template (purpose to interview talki
 | `predictive-risk.md` | Nightly watch list and its honest evaluation |
 | `tenant-isolation.md` | Canary and cross-tenant attempt checks |
 | `metrics-gate.md` | Metric definitions, run report, release gate |
+| `sigma-detections.md` | Sigma rules, Sigma -> OCSF mapping, fixtures, SQL and KQL backends with parity |

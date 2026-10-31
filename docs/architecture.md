@@ -60,6 +60,7 @@ flowchart TB
 | Predictive risk | [components/predictive-risk.md](components/predictive-risk.md) | Built (on planted precursors) |
 | Tenant isolation | [components/tenant-isolation.md](components/tenant-isolation.md) | Built |
 | Metrics and gate | [components/metrics-gate.md](components/metrics-gate.md) | Built |
+| Sigma detections (OCSF, SQL, KQL) | [components/sigma-detections.md](components/sigma-detections.md) | Built (subset, synthetic fixtures); not deployed, Kusto cross-check planned |
 | Azure footprint | [infra/README.md](infra/README.md) | Declared and validated; never deployed |
 
 ## Microsoft Agent Framework usage
@@ -93,6 +94,7 @@ agent at this local server for offline testing.
   PASS  audit chains verify (264 records verified; 268 records verified; 281 records verified)
   PASS  no live containment (dry-run 27, live 0)
   PASS  detections/rules.json is current (aisoc rules-json --check)
-gate: PASS (11/11)
+  PASS  Sigma rules pass their fixtures; evaluator, SQL and KQL agree (19/19 rules)
+gate: PASS (12/12)
 ```
 <!-- /output -->

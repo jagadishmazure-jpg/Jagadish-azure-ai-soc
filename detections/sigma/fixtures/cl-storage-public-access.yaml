@@ -1,0 +1,63 @@
+# Positive (match) and negative (no_match) OCSF events for rules/cl-storage-public-access.yml. Synthetic.
+rule: cl-storage-public-access
+events:
+- expect: match
+  note: public blob access turned on
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-stor-p1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE
+      service:
+        name: MICROSOFT.STORAGE
+      request:
+        data: '{"properties":{"allowBlobPublicAccess":true,"minimumTlsVersion":"TLS1_2"}}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: public blob access turned off
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-stor-n1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE
+      service:
+        name: MICROSOFT.STORAGE
+      request:
+        data: '{"properties":{"allowBlobPublicAccess":false}}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: keys listed
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-stor-n2
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.STORAGE/STORAGEACCOUNTS/LISTKEYS/ACTION
+      service:
+        name: MICROSOFT.STORAGE
+      request:
+        data: '{}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23

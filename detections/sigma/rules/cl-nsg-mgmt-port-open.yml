@@ -1,0 +1,17 @@
+title: Network security rule opens RDP or SSH to the internet
+id: ac5879b8-607a-5719-bced-411947644b9b
+status: experimental
+description: A security rule allows RDP or SSH from any source address.
+author: Jagadish Meduri
+tags: [attack.defense-evasion, attack.t1562.007]
+logsource: { product: azure, service: activitylogs }
+detection:
+  selection_op:
+    OperationNameValue: 'MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE'
+    # \* is a literal star; a bare * is a Sigma wildcard and would match any source (fixture cl-nsg-n1)
+    Properties|contains|all: ['"sourceAddressPrefix":"\*"', '"access":"Allow"']
+  selection_port:
+    Properties|contains: ['"destinationPortRange":"3389"', '"destinationPortRange":"22"']
+  condition: all of selection_*
+falsepositives: [Lab subscriptions, which should not hold production data]
+level: high

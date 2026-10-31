@@ -1,0 +1,13 @@
+title: Connection to a Tor relay or proxy port
+id: 7f2c286c-a180-52fe-9e28-8c5c31bae115
+status: experimental
+description: A process connects to a port used by Tor relays or the local Tor proxy.
+author: Jagadish Meduri
+tags: [attack.command-and-control, attack.t1090.003]
+logsource: { product: windows, category: network_connection }
+detection:
+  selection:
+    DestinationPort: [9001, 9030, 9050, 9051, 9150]
+  condition: selection
+falsepositives: [Unrelated services that reuse these ports]
+level: medium

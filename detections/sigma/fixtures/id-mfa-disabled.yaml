@@ -1,0 +1,63 @@
+# Positive (match) and negative (no_match) OCSF events for rules/id-mfa-disabled.yml. Synthetic.
+rule: id-mfa-disabled
+events:
+- expect: match
+  note: strong auth disabled
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-mfa-p1
+      product:
+        name: Entra ID Audit
+    activity_name: Disable Strong Authentication
+    actor:
+      user:
+        name: helpdesk.temp@brightwater.example
+    user:
+      name: cfo@brightwater.example
+    status: success
+- expect: match
+  note: user deleted own security info
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-mfa-p2
+      product:
+        name: Entra ID Audit
+    activity_name: User deleted security info
+    actor:
+      user:
+        name: cfo@brightwater.example
+    user:
+      name: cfo@brightwater.example
+    status: success
+- expect: no_match
+  note: attempt failed
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-mfa-n1
+      product:
+        name: Entra ID Audit
+    activity_name: Disable Strong Authentication
+    actor:
+      user:
+        name: helpdesk.temp@brightwater.example
+    user:
+      name: cfo@brightwater.example
+    status: failure
+- expect: no_match
+  note: security info registered
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-mfa-n2
+      product:
+        name: Entra ID Audit
+    activity_name: User registered security info
+    actor:
+      user:
+        name: cfo@brightwater.example
+    user:
+      name: cfo@brightwater.example
+    status: success

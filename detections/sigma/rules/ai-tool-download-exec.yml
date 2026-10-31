@@ -1,0 +1,17 @@
+title: Agent shell tool downloads and runs a script
+id: 3857dbd8-489f-5349-9848-1088e8bdebdb
+status: experimental
+description: An AI agent's shell tool pipes a download straight into a shell, which is how injected instructions turn into code execution.
+author: Jagadish Meduri
+tags: [attack.execution, attack.t1059.004, attack.command-and-control, attack.t1105, atlas.aml.t0053, atlas.aml.t0050]
+logsource: { product: ai_agent, category: tool_call }
+detection:
+  selection_tool:
+    ToolName: ['shell', 'run_command', 'terminal']
+  selection_fetch:
+    ToolArguments|contains: ['curl ', 'wget ']
+  selection_pipe:
+    ToolArguments|contains: ['| sh', '| bash', '|sh', '|bash']
+  condition: all of selection_*
+falsepositives: [Build agents that install tools this way, which should use pinned packages instead]
+level: high

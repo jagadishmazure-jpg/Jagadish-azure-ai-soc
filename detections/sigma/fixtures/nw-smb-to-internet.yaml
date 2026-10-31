@@ -1,0 +1,79 @@
+# Positive (match) and negative (no_match) OCSF events for rules/nw-smb-to-internet.yml. Synthetic.
+rule: nw-smb-to-internet
+events:
+- expect: match
+  note: SMB to a public address
+  event:
+    class_uid: 4001
+    metadata:
+      uid: nw-smb-p1
+      product:
+        name: Sysmon
+    actor:
+      process:
+        file:
+          path: System
+    src_endpoint:
+      ip: 10.20.4.17
+    dst_endpoint:
+      ip: 198.51.100.77
+      port: 445
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: SMB to the file server
+  event:
+    class_uid: 4001
+    metadata:
+      uid: nw-smb-n1
+      product:
+        name: Sysmon
+    actor:
+      process:
+        file:
+          path: System
+    src_endpoint:
+      ip: 10.20.4.17
+    dst_endpoint:
+      ip: 10.20.1.5
+      port: 445
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: SMB to 172.16/12
+  event:
+    class_uid: 4001
+    metadata:
+      uid: nw-smb-n2
+      product:
+        name: Sysmon
+    actor:
+      process:
+        file:
+          path: System
+    src_endpoint:
+      ip: 10.20.4.17
+    dst_endpoint:
+      ip: 172.20.8.9
+      port: 445
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: HTTPS to a public address
+  event:
+    class_uid: 4001
+    metadata:
+      uid: nw-smb-n3
+      product:
+        name: Sysmon
+    actor:
+      process:
+        file:
+          path: C:\Program Files\Browser\browser.exe
+    src_endpoint:
+      ip: 10.20.4.17
+    dst_endpoint:
+      ip: 198.51.100.77
+      port: 443
+    device:
+      hostname: BWL-WS-0142

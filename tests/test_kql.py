@@ -102,3 +102,15 @@ def test_count_operator():
 def test_unsupported_raises_kql_error(bad):
     with pytest.raises(KqlError):
         q(bad)
+
+
+def test_matches_regex_is_case_sensitive_and_null_safe():
+    rows = {"S": [{"U": "Admin"}, {"U": "admin"}, {"U": None}]}
+    assert len(kql.run('S | where U matches regex "^a"', rows, NOW)) == 1
+    assert len(kql.run('S | where U matches regex "(?i)^a"', rows, NOW)) == 2
+
+
+def test_ipv4_is_in_range():
+    rows = {"S": [{"IP": "10.1.2.3"}, {"IP": "203.0.113.1"}, {"IP": "not-an-ip"}, {"IP": None}]}
+    assert [r["IP"] for r in kql.run('S | where ipv4_is_in_range(IP, "10.0.0.0/8")', rows, NOW)] == ["10.1.2.3"]
+    assert len(kql.run('S | where not(ipv4_is_in_range(IP, "10.0.0.0/8"))', rows, NOW)) == 3

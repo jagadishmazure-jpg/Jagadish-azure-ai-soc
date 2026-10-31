@@ -1,0 +1,15 @@
+title: LSASS memory dumped with a built-in or admin tool
+id: 0c0db005-4c14-5e51-a147-4b17a92cdeaf
+status: experimental
+description: A command line dumps the LSASS process, which holds sign-in secrets, using comsvcs.dll or procdump.
+author: Jagadish Meduri
+tags: [attack.credential-access, attack.t1003.001]
+logsource: { product: windows, category: process_creation }
+detection:
+  selection_comsvcs:
+    CommandLine|contains|all: ['comsvcs', 'minidump']
+  selection_procdump:
+    CommandLine|contains|all: [' -ma ', 'lsass']
+  condition: 1 of selection_*
+falsepositives: [Support engineers collecting a crash dump on request]
+level: high

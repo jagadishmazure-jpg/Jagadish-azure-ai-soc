@@ -1,0 +1,54 @@
+# Positive (match) and negative (no_match) OCSF events for rules/id-privileged-role-added.yml. Synthetic.
+rule: id-privileged-role-added
+events:
+- expect: match
+  note: Global Administrator added by hand
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-role-p1
+      product:
+        name: Entra ID Audit
+    activity_name: Add member to role
+    actor:
+      user:
+        name: r.okafor@orchidvalley.example
+    user:
+      name: svc-sync@orchidvalley.example
+    status: success
+    policy:
+      name: Global Administrator
+- expect: no_match
+  note: same change through the PIM workflow
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-role-n1
+      product:
+        name: Entra ID Audit
+    activity_name: Add member to role
+    actor:
+      user:
+        name: approver@pim.halyard.example
+    user:
+      name: svc-sync@orchidvalley.example
+    status: success
+    policy:
+      name: Global Administrator
+- expect: no_match
+  note: low-privilege role
+  event:
+    class_uid: 3001
+    metadata:
+      uid: id-role-n2
+      product:
+        name: Entra ID Audit
+    activity_name: Add member to role
+    actor:
+      user:
+        name: r.okafor@orchidvalley.example
+    user:
+      name: new.hire@orchidvalley.example
+    status: success
+    policy:
+      name: Reports Reader

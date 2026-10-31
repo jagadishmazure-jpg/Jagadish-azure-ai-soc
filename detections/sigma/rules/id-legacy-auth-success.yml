@@ -1,0 +1,14 @@
+title: Successful sign-in over a legacy authentication protocol
+id: aec6b3fa-af2b-5f44-918b-4f3b3bdf0d92
+status: experimental
+description: A sign-in succeeds over a protocol that cannot do MFA, which password-spray tools prefer.
+author: Jagadish Meduri
+tags: [attack.initial-access, attack.t1078.004]
+logsource: { product: azure, service: signinlogs }
+detection:
+  selection:
+    ClientAppUsed: ['IMAP4', 'POP3', 'Authenticated SMTP', 'Exchange ActiveSync', 'Other clients']
+    ResultType: '0'
+  condition: selection
+falsepositives: [Old printers or line-of-business apps that still send mail over SMTP AUTH]
+level: medium

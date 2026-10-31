@@ -1,0 +1,103 @@
+# Positive (match) and negative (no_match) OCSF events for rules/cl-nsg-mgmt-port-open.yml. Synthetic.
+rule: cl-nsg-mgmt-port-open
+events:
+- expect: match
+  note: RDP from any source
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-nsg-p1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE
+      service:
+        name: MICROSOFT.NETWORK
+      request:
+        data: '{"sourceAddressPrefix":"*","destinationPortRange":"3389","access":"Allow"}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: match
+  note: SSH from any source
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-nsg-p2
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE
+      service:
+        name: MICROSOFT.NETWORK
+      request:
+        data: '{"access":"Allow","destinationPortRange":"22","sourceAddressPrefix":"*"}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: RDP from the jump host subnet only
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-nsg-n1
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE
+      service:
+        name: MICROSOFT.NETWORK
+      request:
+        data: '{"sourceAddressPrefix":"10.20.0.0/24","destinationPortRange":"3389","access":"Allow"}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: HTTPS from any source
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-nsg-n2
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE
+      service:
+        name: MICROSOFT.NETWORK
+      request:
+        data: '{"sourceAddressPrefix":"*","destinationPortRange":"443","access":"Allow"}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23
+- expect: no_match
+  note: deny rule
+  event:
+    class_uid: 6003
+    metadata:
+      uid: cl-nsg-n3
+      product:
+        name: Azure Activity
+    api:
+      operation: MICROSOFT.NETWORK/NETWORKSECURITYGROUPS/SECURITYRULES/WRITE
+      service:
+        name: MICROSOFT.NETWORK
+      request:
+        data: '{"sourceAddressPrefix":"*","destinationPortRange":"3389","access":"Deny"}'
+    status: Succeeded
+    actor:
+      user:
+        name: ops@pinecrest.example
+    src_endpoint:
+      ip: 198.51.100.23

@@ -1,0 +1,113 @@
+# Positive (match) and negative (no_match) OCSF events for rules/ep-encoded-powershell.yml. Synthetic.
+rule: ep-encoded-powershell
+events:
+- expect: match
+  note: encoded command after -enc
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-enc-p1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      cmd_line: powershell.exe -NoP -W Hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoA
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: match
+  note: PowerShell 7 with the long flag, mixed case
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-enc-p2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Program Files\PowerShell\7\pwsh.exe
+      cmd_line: pwsh.exe -EncodedCommand SQBFAFgA
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: script file, no encoding
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-enc-n1
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      cmd_line: powershell.exe -File C:\Scripts\backup.ps1
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: -enc flag but not PowerShell
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-enc-n2
+      product:
+        name: Sysmon
+    process:
+      file:
+        path: C:\Tools\convert.exe
+      cmd_line: convert.exe -enc utf8 in.txt
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142
+- expect: no_match
+  note: right event, wrong product (filter)
+  event:
+    class_uid: 1007
+    activity_id: 1
+    metadata:
+      uid: ep-enc-n3
+      product:
+        name: Other EDR
+    process:
+      file:
+        path: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+      cmd_line: powershell.exe -enc SQBFAFgA
+      pid: 4120
+    actor:
+      process:
+        file:
+          path: C:\Windows\explorer.exe
+      user:
+        name: BWL\a.rivera
+    device:
+      hostname: BWL-WS-0142

@@ -8,6 +8,7 @@ Offline tests: synthetic data, mock model, no Azure.
 | `test_php2shell.py` | PHP2Shell case study: precision, recall, look-alikes, inventory classifier, verdicts, approval gate |
 | `test_synth.py` | Determinism, fictional identities, stories, ground-truth separation |
 | `test_kql.py` | KQL operators, functions, joins and errors |
+| `test_sigma.py` | Sigma rule set, fail-loud mapping, fixtures, evaluator / SQL / KQL parity, CLI and gate |
 | `test_detections.py` | Rule firing, alert timing, entities, rules.json |
 | `test_attack_intel_ueba.py` | ATT&CK mapping and coverage, TI decay, UEBA signals |
 | `test_triage_routing.py` | Grouping, context, scoring, routing rules |

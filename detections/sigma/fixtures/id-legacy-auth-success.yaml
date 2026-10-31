@@ -1,0 +1,91 @@
+# Positive (match) and negative (no_match) OCSF events for rules/id-legacy-auth-success.yml. Synthetic.
+rule: id-legacy-auth-success
+events:
+- expect: match
+  note: IMAP success
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-leg-p1
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: m.chen@orchidvalley.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: false
+    service:
+      name: Office 365 Exchange Online
+    unmapped:
+      ClientAppUsed: IMAP4
+- expect: match
+  note: SMTP AUTH success
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-leg-p2
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: scanner@brightwater.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: false
+    service:
+      name: Office 365 Exchange Online
+    unmapped:
+      ClientAppUsed: Authenticated SMTP
+- expect: no_match
+  note: IMAP failure (bad password)
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-leg-n1
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: m.chen@orchidvalley.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '50126'
+    is_mfa: false
+    service:
+      name: Office 365 Exchange Online
+    unmapped:
+      ClientAppUsed: IMAP4
+- expect: no_match
+  note: modern client success
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-leg-n2
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: m.chen@orchidvalley.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: true
+    service:
+      name: Office 365 Exchange Online
+    unmapped:
+      ClientAppUsed: Browser
+- expect: no_match
+  note: client app not recorded
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-leg-n3
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: m.chen@orchidvalley.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: true
+    service:
+      name: Office 365 Exchange Online

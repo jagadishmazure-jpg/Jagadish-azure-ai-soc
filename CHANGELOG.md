@@ -4,6 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Sigma detection-as-code (`detections/sigma/`, `aisoc.sigma`, `aisoc sigma list|mapping|test|convert`): 19
+  curated rules for endpoint, identity, cloud, network and AI-agent abuse; an explicit Sigma -> OCSF field
+  mapping that fails on unknown fields, logsources and values; 77 synthetic positive and negative OCSF fixtures;
+  SQL (SQLite) and KQL backends that must agree with the evaluator on every event, as a twelfth gate check;
+  `matches regex` and `ipv4_is_in_range` in the KQL engine; ADR 0007.
 - PHP2Shell case study (`docs/case-studies/`, `detections/php2shell/`, `aisoc.php2shell`, `aisoc php2shell`): synthetic
   web and endpoint telemetry with look-alikes, five KQL rules, a PHP inventory classifier, recon / failed attempt /
   compromise verdicts, a takedown vs patch decision record and an approval-gated dry-run plan; 44 new tests.
@@ -24,7 +29,7 @@ All notable changes to this project are documented here.
 - Containment planning with digest-bound approvals, dual control, dry-run executor and per-tenant
   hash-chained audit.
 - Feedback loop with analyst-only case notes, Beta-updated priors and replay-gated thresholds.
-- Predictive risk watch list; tenant isolation canary and crossing checks; metrics and an eleven-check
+- Predictive risk watch list; tenant isolation canary and crossing checks; metrics and a twelve-check
   release gate.
 - Terraform and Bicep for the workspace, rules, least-privilege identities, managed-identity playbook and
   private networking; CI, CodeQL, infra, gated deploy and teardown workflows.

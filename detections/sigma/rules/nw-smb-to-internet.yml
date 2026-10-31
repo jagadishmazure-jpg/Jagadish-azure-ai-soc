@@ -1,0 +1,15 @@
+title: Outbound SMB to a public address
+id: 1c8cd91f-3d6d-50f7-ad43-22343e275a0e
+status: experimental
+description: A host connects to TCP 445 on a public address. SMB should never leave the network.
+author: Jagadish Meduri
+tags: [attack.exfiltration, attack.t1048]
+logsource: { product: windows, category: network_connection }
+detection:
+  selection:
+    DestinationPort: 445
+  filter_private:
+    DestinationIp|cidr: ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', '127.0.0.0/8']
+  condition: selection and not filter_private
+falsepositives: [Misconfigured file share mappings to a cloud file service]
+level: medium

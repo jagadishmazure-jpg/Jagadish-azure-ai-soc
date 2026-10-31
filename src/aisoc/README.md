@@ -10,6 +10,7 @@ The `aisoc` package. Product modules never import `labels`, `analyst` or `metric
 | `store.py` | Per-tenant data store (the only path to telemetry) |
 | `labels.py` | Ground truth (evaluation only) |
 | `kql.py` | KQL subset interpreter |
+| `sigma.py` | Sigma rules: OCSF mapping, evaluator, SQL and KQL backends, fixture and parity checks |
 | `detections.py` | Scheduled-rule simulation, product alerts, rules.json export |
 | `attack.py` | ATT&CK catalogue, mapping, coverage, Navigator layer |
 | `intel.py` | Threat-intel feed, decay and lookup |

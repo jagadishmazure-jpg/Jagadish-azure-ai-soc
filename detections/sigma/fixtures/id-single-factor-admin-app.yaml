@@ -1,0 +1,75 @@
+# Positive (match) and negative (no_match) OCSF events for rules/id-single-factor-admin-app.yml. Synthetic.
+rule: id-single-factor-admin-app
+events:
+- expect: match
+  note: portal sign-in without MFA
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-sfa-p1
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: it.admin@pinecrest.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: false
+    service:
+      name: Azure Portal
+    unmapped:
+      ClientAppUsed: Browser
+- expect: no_match
+  note: portal sign-in with MFA
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-sfa-n1
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: it.admin@pinecrest.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: true
+    service:
+      name: Azure Portal
+    unmapped:
+      ClientAppUsed: Browser
+- expect: no_match
+  note: break-glass account (filtered)
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-sfa-n2
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: breakglass-01@pinecrest.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: false
+    service:
+      name: Azure Portal
+    unmapped:
+      ClientAppUsed: Browser
+- expect: no_match
+  note: single factor to a non-admin app
+  event:
+    class_uid: 3002
+    metadata:
+      uid: id-sfa-n3
+      product:
+        name: Entra ID Sign-in
+    user:
+      name: j.ortiz@pinecrest.example
+    src_endpoint:
+      ip: 203.0.113.45
+    status_code: '0'
+    is_mfa: false
+    service:
+      name: Office 365 Exchange Online
+    unmapped:
+      ClientAppUsed: Browser

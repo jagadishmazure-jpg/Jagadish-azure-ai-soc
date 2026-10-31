@@ -1,0 +1,14 @@
+title: MFA removed from a user
+id: bd2faaa2-6bb9-57f6-b743-25f2b8706625
+status: experimental
+description: Strong authentication is disabled or security info is deleted for a user, often right after an account takeover.
+author: Jagadish Meduri
+tags: [attack.persistence, attack.defense-evasion, attack.t1556.006]
+logsource: { product: azure, service: auditlogs }
+detection:
+  selection:
+    ActivityDisplayName: ['Disable Strong Authentication', 'User deleted security info', 'Admin deleted security info']
+    Result: success
+  condition: selection
+falsepositives: [Help desk resetting a lost phone, which should come with a ticket]
+level: high

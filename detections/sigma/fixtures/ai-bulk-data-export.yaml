@@ -1,0 +1,103 @@
+# Positive (match) and negative (no_match) OCSF events for rules/ai-bulk-data-export.yml. Synthetic.
+rule: ai-bulk-data-export
+events:
+- expect: match
+  note: query returns 48,000 rows
+  event:
+    class_uid: 6003
+    metadata:
+      uid: ai-bulk-p1
+      product:
+        name: Agent Gateway
+    api:
+      operation: sql_query
+      request:
+        data: SELECT * FROM members
+      response:
+        data: ''
+    actor:
+      app_name: triage-agent
+      session:
+        uid: sess-ai-bulk-p1
+    unmapped:
+      result_rows: 48000
+- expect: match
+  note: exactly at the limit
+  event:
+    class_uid: 6003
+    metadata:
+      uid: ai-bulk-p2
+      product:
+        name: Agent Gateway
+    api:
+      operation: export_table
+      request:
+        data: members
+      response:
+        data: ''
+    actor:
+      app_name: triage-agent
+      session:
+        uid: sess-ai-bulk-p2
+    unmapped:
+      result_rows: 10000
+- expect: no_match
+  note: small answer
+  event:
+    class_uid: 6003
+    metadata:
+      uid: ai-bulk-n1
+      product:
+        name: Agent Gateway
+    api:
+      operation: sql_query
+      request:
+        data: SELECT count(*) FROM members
+      response:
+        data: ''
+    actor:
+      app_name: triage-agent
+      session:
+        uid: sess-ai-bulk-n1
+    unmapped:
+      result_rows: 1
+- expect: no_match
+  note: approved reporting agent
+  event:
+    class_uid: 6003
+    metadata:
+      uid: ai-bulk-n2
+      product:
+        name: Agent Gateway
+    api:
+      operation: export_table
+      request:
+        data: members
+      response:
+        data: ''
+    actor:
+      app_name: nightly-report-agent
+      session:
+        uid: sess-ai-bulk-n2
+    unmapped:
+      result_rows: 52000
+- expect: no_match
+  note: one row short
+  event:
+    class_uid: 6003
+    metadata:
+      uid: ai-bulk-n3
+      product:
+        name: Agent Gateway
+    api:
+      operation: run_query
+      request:
+        data: SELECT id FROM claims
+      response:
+        data: ''
+    actor:
+      app_name: triage-agent
+      session:
+        uid: sess-ai-bulk-n3
+    unmapped:
+      result_rows: 9999
