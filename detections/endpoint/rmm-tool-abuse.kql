@@ -1,0 +1,8 @@
+// Remote monitoring and management (RMM) tool abuse: a remote-access tool runs that is not the customer's
+// approved RMM, or the approved one starts from a user's Downloads folder instead of its managed install path.
+let Rmm = dynamic(["ScreenConnect.ClientService.exe", "AnyDesk.exe", "TeamViewer.exe", "atera_agent.exe", "fleetdesk-agent.exe"]);
+let Approved = dynamic(["fleetdesk-agent.exe"]);
+DeviceProcessEvents
+| where FileName in (Rmm)
+| where not(FileName in (Approved)) or FolderPath contains "\\Downloads\\"
+| project TimeGenerated, DeviceName, FileName, FolderPath, InitiatingProcessFileName, AccountUpn, EventId

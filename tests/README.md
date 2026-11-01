@@ -22,3 +22,10 @@ Offline tests: synthetic data, mock model, no Azure.
 | `test_iac.py` | Terraform, Bicep and workflow structure, offline |
 | `test_render_docs.py` | Doc renderer behaviour |
 | `test_repo_hygiene.py` | Doc completeness, no dates, no real identifiers, no copied PDF |
+| `test_itdr.py` | Identity pack: stories, named false positive, look-alikes, address ranges, plans |
+| `test_endpoint.py` | Endpoint pack: rules, look-alikes, process tree, persistence, triage plans |
+| `test_exposure.py` | Criticality, overrides, known-exploited findings, paths, choke points, queue |
+| `test_consensus.py` | Consensus gate: no false auto-reports, veto, threshold sweep |
+| `test_authority.py` | Authority registry: refusals, execution, verification, drift, undo, agent quarantine |
+| `test_timeline_search.py` | Audit-chain timeline and plain-English search |
+| `test_service_ops.py` | Log-filter costs, service tiers, monthly reports, new CLI commands and gate |

@@ -1,0 +1,29 @@
+# Fictional service packaging for small and mid-sized customers of the fictional MSSP. Targets are in
+# minutes. MTTD and acknowledgement are measured on the synthetic run; MTTR is the repo's simulated MTTR
+# (analyst minutes come from config/thresholds.yaml), so an SLA check on it is a model check.
+tiers:
+  essentials:
+    name: Essentials
+    for: "small offices that need identity and email covered"
+    coverage: [identity sign-ins, email and links, cloud file activity]
+    hours: "business hours human review; automation always on"
+    sla_min: { mttd: 60, ack: 240, mttr: 480 }
+    includes: [monthly report]
+  standard:
+    name: Standard
+    for: "companies with endpoints and servers to protect"
+    coverage: [identity sign-ins, email and links, cloud file activity, endpoints and servers]
+    hours: "24x7 human review"
+    sla_min: { mttd: 45, ack: 120, mttr: 240 }
+    includes: [monthly report, endpoint triage agent, approval-gated containment]
+  plus:
+    name: Plus
+    for: "regulated customers (health, finance) with crown-jewel systems"
+    coverage: [identity sign-ins, email and links, cloud file activity, endpoints and servers, identity threat pack, exposure context]
+    hours: "24x7 human review with a named lead analyst"
+    sla_min: { mttd: 30, ack: 60, mttr: 180 }
+    includes: [monthly report, endpoint triage agent, approval-gated containment, post-action verification, quarterly tabletop]
+customers:
+  pinecrest: essentials
+  brightwater: standard
+  orchidvalley: plus

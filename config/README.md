@@ -10,3 +10,7 @@ Configuration read by the code. Nothing here is written by code.
 | `actions.yaml` | Containment action catalogue with requests, permissions and reversal |
 | `thresholds.yaml` | Triage, routing, QA, windows and simulated analyst minutes |
 | `attack-techniques.yaml` | Priority ATT&CK techniques for coverage |
+| `authority.yaml` | Authority registry: stage, owner, approvals, evidence, blast radius, effect, verification and undo per action |
+| `exposure.yaml` | Asset criticality by role with attributed overrides, synthetic open findings (known-exploited flag) and reachability |
+| `smart-filter.yaml` | Candidate ingest filters, planted canaries and assumed per-GB prices for the cost simulation |
+| `service-tiers.yaml` | Three fictional service tiers with SLA targets in minutes and the tenant-to-tier map |

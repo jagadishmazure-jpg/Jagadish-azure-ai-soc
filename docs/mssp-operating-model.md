@@ -68,6 +68,15 @@ cross-tenant attempts:
 ```
 <!-- /output -->
 
+## Service tiers, SLAs and monthly reports
+
+Each customer is on one of three fictional tiers (Essentials, Standard, Plus) in
+`config/service-tiers.yaml`. `aisoc tiers` checks MTTD, acknowledgement and simulated MTTR against the
+tier and prints every breach. `aisoc monthly-report --tenant <id> --write` writes a Markdown, HTML and CSV
+preview under `out/monthly/` (not committed); nothing is ever sent. `aisoc smart-filter` models how much
+ingest a filter would move to cheaper storage without losing an alert. Details and output:
+[components/service-operations.md](components/service-operations.md).
+
 ## Onboarding a new customer (offline)
 
 1. Add the tenant to `config/tenants.yaml` (domain, workspace, crown jewels, approvers, break-glass).

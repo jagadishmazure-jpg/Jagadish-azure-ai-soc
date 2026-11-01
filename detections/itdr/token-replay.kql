@@ -1,0 +1,10 @@
+// Session or token theft (adversary-in-the-middle replay): one sign-in session used from two or more
+// autonomous systems, at least one of them a hosting or anonymising network. A phone moving from home
+// broadband to its mobile carrier keeps the session but never touches a hosting network, so it is excluded.
+let Risky = dynamic(["hosting", "anonymous-vpn"]);
+SigninLogs
+| where ResultType == "0" and isnotempty(SessionId)
+| extend RiskyAsn = iff(AsnCategory in (Risky), 1, 0)
+| summarize Asns = dcount(AutonomousSystemNumber), RiskyHits = sum(RiskyAsn), Devices = dcount(DeviceId), TimeGenerated = max(TimeGenerated), EventIds = make_set(EventId) by UserPrincipalName, SessionId
+| where Asns >= 2 and RiskyHits >= 1
+| project TimeGenerated, UserPrincipalName, SessionId, Asns, Devices, EventIds

@@ -1,0 +1,7 @@
+// Rogue OAuth app: a user (not an admin consent workflow) grants an app from an unverified publisher a
+// scope that reads mail or files, at run time. Verified publishers and low scopes such as User.Read are excluded.
+let HighScopes = dynamic(["Mail.Read", "Mail.ReadWrite", "Mail.Send", "Files.ReadWrite.All", "Files.Read.All", "MailboxSettings.ReadWrite"]);
+AuditLogs
+| where OperationName == "Consent to application" and PublisherVerified == false
+| where ConsentedScopes has_any (HighScopes)
+| project TimeGenerated, InitiatedBy, TargetAppName, ConsentedScopes, EventId

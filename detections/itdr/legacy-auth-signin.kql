@@ -1,0 +1,8 @@
+// Legacy authentication: a successful sign-in over a protocol that cannot do MFA (IMAP, POP, SMTP AUTH,
+// Exchange ActiveSync basic, or the resource-owner password flow). Listed scan-to-email devices are excluded.
+let Legacy = dynamic(["IMAP4", "POP3", "Authenticated SMTP", "Exchange ActiveSync", "Other clients"]);
+SigninLogs
+| where ResultType == "0"
+| where ClientAppUsed in (Legacy) or AuthenticationProtocol == "ropc"
+| where LegacyAllowListed == false
+| project TimeGenerated, UserPrincipalName, IPAddress, ClientAppUsed, AuthenticationProtocol, EventId

@@ -1,0 +1,9 @@
+// Shadow workflow used in business email compromise: an inbox rule that deletes, marks read or moves to a
+// folder people rarely open any mail mentioning security, MFA, passwords, phishing or payment changes.
+let Words = dynamic(["security", "mfa", "password", "phish", "suspicious", "verify", "wire", "bank details"]);
+let Hiding = dynamic(["RSS Feeds", "Conversation History", "Archive", "Deleted Items", "Junk Email"]);
+OfficeActivity
+| where Operation in ("New-InboxRule", "Set-InboxRule")
+| where SubjectOrBodyContainsWords has_any (Words)
+| where DeleteMessage == true or MarkAsRead == true or MoveToFolder in (Hiding)
+| project TimeGenerated, UserId, RuleName, MoveToFolder, DeleteMessage, ClientIP, EventId

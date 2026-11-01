@@ -1,0 +1,6 @@
+// Windows autostart: a Run or RunOnce value that starts a program from a folder any user can write to,
+// set by a process without a trusted signature. Signed per-user apps (chat clients) are excluded.
+DeviceRegistryEvents
+| where ActionType == "RegistryValueSet" and RegistryKey has "CurrentVersion\\Run"
+| where (RegistryValueData contains "\\AppData\\" or RegistryValueData contains "\\Temp\\" or RegistryValueData contains "\\Users\\Public\\" or RegistryValueData contains "\\ProgramData\\") and InitiatingProcessTrusted == false
+| project TimeGenerated, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName, EventId

@@ -1,0 +1,8 @@
+# Endpoint pack: four detections over the pack's own synthetic Windows and macOS telemetry (aisoc.endpoint),
+# run by the same KQL interpreter as the main rules. Not in detections/rules.json, so not deployed (planned).
+# One detection may need several queries because Windows and macOS record autostart items in different tables.
+rules:
+  - { id: autostart-persistence, files: [run-key-user-writable.kql, scheduled-task-user-writable.kql, launch-agent-unsigned.kql], severity: High, stage: persistence, technique: T1547.001 }
+  - { id: service-from-temp-path, files: [service-from-temp-path.kql], severity: High, stage: persistence, technique: T1543.003 }
+  - { id: rmm-tool-abuse, files: [rmm-tool-abuse.kql], severity: High, stage: command-and-control, technique: T1219 }
+  - { id: ransomware-canary-touched, files: [ransomware-canary-touched.kql], severity: Critical, stage: impact, technique: T1486 }

@@ -21,7 +21,7 @@ flowchart LR
   P2[pipeline.run baseline] --> M
   L[aisoc.labels] --> M
   M --> CLI[aisoc metrics, stories, compare]
-  M --> G[aisoc gate: 12 checks]
+  M --> G[aisoc gate: 18 checks]
   ISO[isolation checks] --> G
   AUD[audit verify] --> G
   RJ[rules-json --check] --> G
@@ -100,6 +100,7 @@ def gate_checks() -> list[tuple[str, bool, str]]:
         ),
         ("detections/rules.json is current", _rules_current(), "aisoc rules-json --check"),
         _sigma_check(),
+        *_pack_checks(),
     ]
 ```
 <!-- /code -->
@@ -209,7 +210,13 @@ response:
   PASS  no live containment (dry-run 27, live 0)
   PASS  detections/rules.json is current (aisoc rules-json --check)
   PASS  Sigma rules pass their fixtures; evaluator, SQL and KQL agree (19/19 rules)
-gate: PASS (12/12)
+  PASS  endpoint and identity packs detect every story (endpoint 3/3, identity 4/4)
+  PASS  endpoint triage clears no attack (4/4 verdicts correct)
+  PASS  no false auto-report through the consensus gate (1 auto-reported)
+  PASS  no action at stage 4; undo restores state (undo 6/6)
+  PASS  log filters lose no alert (1 filter(s) accepted)
+  PASS  plain-English search refuses every unsafe question (9/9)
+gate: PASS (18/18)
 ```
 <!-- /output -->
 

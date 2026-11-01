@@ -29,6 +29,16 @@ The `aisoc` package. Product modules never import `labels`, `analyst` or `metric
 | `analyst.py` | Simulated analysts and approvers (evaluation only) |
 | `feedback.py` | Feedback loop: notes, priors, thresholds |
 | `php2shell.py` | PHP2Shell case study: telemetry, rules run, inventory check, triage, approval-gated plan |
+| `itdr.py` | Identity threat pack: telemetry, look-alikes, rules run, per-account cases and plans |
+| `endpoint.py` | Endpoint pack and triage agent: process tree, persistence checks, verdict and remediation plan |
+| `exposure.py` | Exposure context: criticality, known-exploited findings, attack paths, choke points, queue order |
+| `consensus.py` | Four-check consensus gate before an incident is auto-reported |
+| `authority.py` | Authority registry, plan digests, approvals, simulated execution, post-action verification and undo |
+| `timeline.py` | Incident timeline built from a verified audit chain |
+| `nlsearch.py` | Plain-English questions to allow-listed KQL templates; shows the query, runs only on confirm |
+| `smartfilter.py` | Ingest-filter replay and per-customer cost simulation |
+| `tiers.py` | Service tiers and SLA checks per customer |
+| `monthly.py` | Monthly per-client report preview files (Markdown, HTML, CSV); no send path |
 | `pipeline.py` | End-to-end runs, replay gate, holdout freeze |
 | `metrics.py` | Metric computation against ground truth; per-incident technique mix (`aisoc mix`) |
 | `risk.py` | Predictive risk ranking and evaluation |

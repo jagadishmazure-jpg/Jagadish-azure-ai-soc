@@ -1,0 +1,5 @@
+// Windows autostart: a scheduled task whose action runs a program from a user-writable folder,
+// created by a process without a trusted signature.
+DeviceEvents
+| where ActionType == "ScheduledTaskCreated" and (TaskCommand contains "\\AppData\\" or TaskCommand contains "\\Temp\\" or TaskCommand contains "\\Users\\Public\\" or TaskCommand contains "\\ProgramData\\") and InitiatingProcessTrusted == false
+| project TimeGenerated, DeviceName, TaskName, TaskCommand, InitiatingProcessFileName, EventId

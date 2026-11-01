@@ -1,0 +1,62 @@
+# Exposure context for triage (synthetic). Per tenant: hosts with their role, open vulnerability findings
+# (with a flag for the known-exploited list), and "can reach" edges between assets. aisoc.exposure turns
+# this into asset criticality (1-10, rule based, a human override always wins and is logged), open
+# known-exploited findings, and whether the asset sits on an attack path to a crown jewel.
+# Finding ids are synthetic (SYN-...), not real CVE numbers.
+roles:              # base criticality by role; crown jewels are always 10
+  domain_controller: 10
+  business_app: 9
+  admin_workstation: 8
+  backup_server: 8
+  server: 6
+  workstation: 3
+  mac_workstation: 3
+accounts:           # base criticality for accounts that are not approvers or break-glass (those are 9)
+  service_account_prefix: "svc."
+  service_account: 7
+  default: 3
+tenants:
+  brightwater:
+    hosts:
+      BWL-DC01:   { role: domain_controller }
+      BWL-ERP01:  { role: business_app, findings: [{ id: SYN-ERP-0412, kev: false }] }
+      BWL-ADM01:  { role: admin_workstation, findings: [{ id: SYN-WIN-2231, kev: true }] }
+      BWL-BKP01:  { role: backup_server }
+      BWL-SRV02:  { role: server }
+      BWL-SRV03:  { role: server, findings: [{ id: SYN-SMB-0907, kev: true }, { id: SYN-WIN-1180, kev: false }] }
+      BWL-WS07:   { role: workstation, findings: [{ id: SYN-BRW-3301, kev: true }] }
+      BWL-MAC04:  { role: mac_workstation }
+    edges:          # from -> to: "an attacker on <from> can reach <to>" (cached admin logons, backup operator rights, open admin shares)
+      - [BWL-WS07, BWL-SRV03]
+      - [BWL-SRV03, BWL-ADM01]
+      - [BWL-ADM01, BWL-DC01]
+      - [BWL-BKP01, BWL-DC01]
+      - [BWL-BKP01, BWL-ERP01]
+      - [BWL-MAC04, BWL-ERP01]
+    overrides:      # human overrides win over the rules; each one is shown with who set it and why
+      BWL-SRV02: { criticality: 2, by: it.director@brightwater.example, why: "test server, no production data" }
+  orchidvalley:
+    hosts:
+      OVC-DC01:   { role: domain_controller }
+      OVC-EHR01:  { role: business_app, findings: [{ id: SYN-EHR-0118, kev: true }] }
+      OVC-ADM01:  { role: admin_workstation }
+      OVC-BKP01:  { role: backup_server, findings: [{ id: SYN-BKP-0640, kev: false }] }
+      OVC-WS008:  { role: workstation, findings: [{ id: SYN-OFF-2210, kev: true }] }
+    edges:
+      - [OVC-WS008, OVC-EHR01]
+      - [OVC-ADM01, OVC-DC01]
+      - [OVC-BKP01, OVC-DC01]
+    overrides:
+      OVC-WS008: { criticality: 7, by: ciso@orchidvalley.example, why: "front-desk machine with standing access to patient records" }
+  pinecrest:
+    hosts:
+      PCU-DC01:   { role: domain_controller }
+      PCU-CORE01: { role: business_app }
+      PCU-ADM01:  { role: admin_workstation, findings: [{ id: SYN-WIN-2231, kev: true }] }
+      PCU-BKP01:  { role: backup_server }
+      PCU-WS008:  { role: workstation }
+    edges:
+      - [PCU-WS008, PCU-ADM01]
+      - [PCU-ADM01, PCU-DC01]
+      - [PCU-BKP01, PCU-CORE01]
+    overrides: {}

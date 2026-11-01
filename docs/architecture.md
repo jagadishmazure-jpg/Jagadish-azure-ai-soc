@@ -95,6 +95,12 @@ agent at this local server for offline testing.
   PASS  no live containment (dry-run 27, live 0)
   PASS  detections/rules.json is current (aisoc rules-json --check)
   PASS  Sigma rules pass their fixtures; evaluator, SQL and KQL agree (19/19 rules)
-gate: PASS (12/12)
+  PASS  endpoint and identity packs detect every story (endpoint 3/3, identity 4/4)
+  PASS  endpoint triage clears no attack (4/4 verdicts correct)
+  PASS  no false auto-report through the consensus gate (1 auto-reported)
+  PASS  no action at stage 4; undo restores state (undo 6/6)
+  PASS  log filters lose no alert (1 filter(s) accepted)
+  PASS  plain-English search refuses every unsafe question (9/9)
+gate: PASS (18/18)
 ```
 <!-- /output -->

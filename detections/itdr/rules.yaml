@@ -1,0 +1,10 @@
+# Identity threat detection (ITDR) pack for Microsoft 365 / Entra ID. These rules run over the pack's own
+# synthetic telemetry (aisoc.itdr) through the same KQL interpreter as the main rules. They are not in
+# detections/rules.json, so Terraform and Bicep do not deploy them (planned).
+rules:
+  - { id: token-replay, file: token-replay.kql, severity: High, stage: credential-access, technique: T1550.004, entity: UserPrincipalName }
+  - { id: oauth-consent-risky, file: oauth-consent-risky.kql, severity: High, stage: persistence, technique: T1528, entity: InitiatedBy }
+  - { id: device-code-signin, file: device-code-signin.kql, severity: High, stage: initial-access, technique: T1566.002, entity: UserPrincipalName }
+  - { id: legacy-auth-signin, file: legacy-auth-signin.kql, severity: Medium, stage: initial-access, technique: T1078.004, entity: UserPrincipalName }
+  - { id: hosting-or-vpn-signin, file: hosting-or-vpn-signin.kql, severity: Low, stage: initial-access, technique: T1078.004, entity: UserPrincipalName }
+  - { id: inbox-rule-hides-security-mail, file: inbox-rule-hides-security-mail.kql, severity: High, stage: defense-evasion, technique: T1564.008, entity: UserId }

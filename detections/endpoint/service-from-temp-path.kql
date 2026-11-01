@@ -1,0 +1,5 @@
+// A new Windows service whose binary sits in a temporary folder: a common lateral-movement and
+// persistence pattern (remote service creation with a dropped binary).
+DeviceEvents
+| where ActionType == "ServiceInstalled" and (ServiceImagePath contains "\\Temp\\")
+| project TimeGenerated, DeviceName, ServiceName, ServiceImagePath, InitiatingProcessFileName, EventId

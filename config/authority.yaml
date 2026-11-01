@@ -1,0 +1,24 @@
+# Authority registry: for every containment action, who owns it, how far it may go on its own, what
+# evidence it needs, how wide its effect is, how it is checked afterwards and how it is undone.
+# Stages: 1 = recommend only; 2 = prepared plan, a person approves and runs it; 3 = runs after approval,
+#   then is verified automatically at each `verify_after` minute and has a ready undo plan;
+#   4 = would run without approval. No action is at stage 4 and aisoc.authority refuses to apply a
+#   stage-4 promotion: it can only propose one for a person to decide.
+# `effect` is one state change or a list of them.
+# The four actions of config/actions.yaml keep their API details there; this file adds the governance.
+max_stage: 3
+actions:
+  disable_user:        { stage: 3, owner: soc.lead, approvals: 1, evidence: [true_positive_verdict, account_entity], min_agree: 2, min_confidence: 0.8, blast_radius: one account, effect: { key: "user:{target}:enabled", value: false }, verify_after: [5, 60], undo: "re-enable the account" }
+  revoke_sessions:     { stage: 3, owner: soc.lead, approvals: 1, evidence: [account_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one account's sign-in sessions, effect: { key: "user:{target}:sessions", value: 0 }, verify_after: [5, 60], undo: "none needed; the user signs in again" }
+  isolate_host:        { stage: 3, owner: soc.lead, approvals: 1, evidence: [true_positive_verdict, host_entity], min_agree: 2, min_confidence: 0.8, blast_radius: one device, effect: { key: "host:{target}:isolated", value: true }, verify_after: [5, 60], undo: "release the device from isolation" }
+  block_ip:            { stage: 3, owner: soc.lead, approvals: 1, evidence: [ip_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one address for every user, effect: { key: "ip:{target}:blocked", value: true }, verify_after: [5, 60], undo: "delete the indicator" }
+  reset_password:      { stage: 2, owner: it.helpdesk, approvals: 1, evidence: [account_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one account, effect: { key: "user:{target}:password_reset", value: true }, verify_after: [5], undo: "none; the user sets a new password" }
+  remove_inbox_rule:   { stage: 3, owner: soc.lead, approvals: 1, evidence: [account_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one mailbox rule, effect: { key: "mailbox:{target}:hiding_rule", value: false }, verify_after: [5, 60], undo: "re-create the rule from the saved definition" }
+  revoke_oauth_grant:  { stage: 3, owner: soc.lead, approvals: 1, evidence: [account_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one app's access for one user, effect: { key: "grant:{target}:active", value: false }, verify_after: [5, 60], undo: "the user consents again if the app is legitimate" }
+  block_legacy_auth_for_user: { stage: 2, owner: identity.team, approvals: 1, evidence: [account_entity], min_agree: 2, min_confidence: 0.7, blast_radius: one account's old mail protocols, effect: { key: "user:{target}:legacy_auth", value: false }, verify_after: [5, 60], undo: "remove the user from the block group" }
+  remove_persistence:  { stage: 2, owner: soc.lead, approvals: 1, evidence: [host_entity], min_agree: 2, min_confidence: 0.8, blast_radius: one autostart item, effect: { key: "persist:{target}:present", value: false }, verify_after: [5, 60], undo: "restore the item from the saved copy" }
+  kill_process:        { stage: 2, owner: soc.lead, approvals: 1, evidence: [host_entity], min_agree: 2, min_confidence: 0.8, blast_radius: one process, effect: { key: "proc:{target}:running", value: false }, verify_after: [5], undo: "none; the process can be started again" }
+  quarantine_ai_agent: { stage: 3, owner: ai.platform.owner, approvals: 2, evidence: [agent_entity, guardrail_violation], min_agree: 2, min_confidence: 0.7, blast_radius: one AI agent and its tool connections, effect: [{ key: "agent:{target}:identity_enabled", value: false }, { key: "agent:{target}:tool_connections", value: 0 }, { key: "agent:{target}:credential_valid", value: false }], verify_after: [5, 60], undo: "re-enable the agent identity, restore its tool connections and rotate its credential" }
+promotion:            # what would have to be true to *propose* moving an action up one stage
+  min_verified_runs: 5
+  max_failed_verifications: 0

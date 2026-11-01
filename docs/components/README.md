@@ -19,3 +19,10 @@ Component docs. Each follows the 16-section template (purpose to interview talki
 | `tenant-isolation.md` | Canary and cross-tenant attempt checks |
 | `metrics-gate.md` | Metric definitions, run report, release gate |
 | `sigma-detections.md` | Sigma rules, Sigma -> OCSF mapping, fixtures, SQL and KQL backends with parity |
+| `itdr-pack.md` | Identity threat pack for Microsoft 365 and Entra ID: five attack patterns, look-alikes, cases and plans |
+| `endpoint-triage.md` | Endpoint pack and triage agent: process tree, persistence, Windows and macOS stories |
+| `exposure-context.md` | Asset criticality, known-exploited findings, attack paths and choke points in the queue |
+| `consensus-gate.md` | Four independent checks before an incident is auto-reported |
+| `authority-registry.md` | Per-action authority, approvals bound to plans, post-action verification, undo, AI agent quarantine |
+| `timeline-search.md` | Incident timeline from the audit chain; plain-English search that shows KQL first |
+| `service-operations.md` | Service tiers and SLAs, log-filter cost simulation, monthly client report previews |

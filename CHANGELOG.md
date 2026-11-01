@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+- Small-business SOC additions, all on synthetic data with fictional customers: identity threat pack for
+  Microsoft 365 and Entra ID (`aisoc itdr`, six rules), endpoint pack and triage agent with process tree and
+  persistence checks for Windows and macOS (`aisoc endpoint`, four rules), exposure context with
+  choke points (`aisoc exposure`), consensus gate (`aisoc consensus`), authority registry with post-action
+  verification, undo and AI-agent quarantine (`aisoc authority`), audit-chain timeline (`aisoc timeline`),
+  plain-English search that shows KQL first (`aisoc search`), log-filter cost model (`aisoc smart-filter`),
+  service tiers with SLA checks (`aisoc tiers`) and monthly report preview files (`aisoc monthly-report`);
+  six new gate checks (eighteen in total); seven component docs; `docs/USE_CASES.md`,
+  `docs/PRESENTATION_GUIDE.md` and a reading order; brand check in CI.
 - Sigma detection-as-code (`detections/sigma/`, `aisoc.sigma`, `aisoc sigma list|mapping|test|convert`): 19
   curated rules for endpoint, identity, cloud, network and AI-agent abuse; an explicit Sigma -> OCSF field
   mapping that fails on unknown fields, logsources and values; 77 synthetic positive and negative OCSF fixtures;
@@ -29,7 +38,7 @@ All notable changes to this project are documented here.
 - Containment planning with digest-bound approvals, dual control, dry-run executor and per-tenant
   hash-chained audit.
 - Feedback loop with analyst-only case notes, Beta-updated priors and replay-gated thresholds.
-- Predictive risk watch list; tenant isolation canary and crossing checks; metrics and a twelve-check
+- Predictive risk watch list; tenant isolation canary and crossing checks; metrics and a
   release gate.
 - Terraform and Bicep for the workspace, rules, least-privilege identities, managed-identity playbook and
   private networking; CI, CodeQL, infra, gated deploy and teardown workflows.

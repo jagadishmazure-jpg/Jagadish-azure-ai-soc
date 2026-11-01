@@ -37,7 +37,16 @@
   cloud, network and AI-agent abuse, an explicit Sigma -> OCSF field mapping that fails on unknown fields,
   77 synthetic match and no-match fixtures, and SQL and KQL backends that must return the same events as
   the evaluator (19 of 19 rules agree, measured on synthetic events).
-- **488 automated tests**, all offline, plus a twelve-check release gate and docs whose outputs and code
+- **Small-business SOC packs:** an [identity threat pack](docs/components/itdr-pack.md) for Microsoft 365
+  and Entra ID (4 of 4 stories, 1 named false positive), an [endpoint triage agent](docs/components/endpoint-triage.md)
+  with process trees and persistence checks on Windows and macOS (3 of 3 stories, 4 of 4 verdicts correct),
+  [exposure context](docs/components/exposure-context.md) in the queue, a [consensus gate](docs/components/consensus-gate.md)
+  before auto-reporting (0 false auto-reports against 9 for rule-only) and an [authority registry](docs/components/authority-registry.md)
+  with post-action verification, undo and two-person AI-agent quarantine. Measured on synthetic data.
+- **Running the service:** [three tiers with SLA checks, a log-filter cost model and monthly client report
+  previews](docs/components/service-operations.md) (assumed prices; nothing is sent), an audit-chain
+  incident timeline and a plain-English search that shows the KQL before running it.
+- **641 automated tests**, all offline, plus an eighteen-check release gate and docs whose outputs and code
   excerpts are regenerated and drift-checked in CI.
 
 **Skills demonstrated:** security operations (triage, investigation, containment, detection engineering),
@@ -60,6 +69,13 @@ scenario labels, design, code and wording are this repository's own; see
 of a cognitive SOC (agentic architecture, institutional knowledge, adaptive learning, contextual analysis
 and human-AI collaboration), with real output and an honest verdict per part, is in
 [docs/cognitive-soc-five-parts.md](docs/cognitive-soc-five-parts.md).
+
+The small-business additions (identity and endpoint packs, consensus gate, authority registry, service
+tiers, monthly reports, exposure context) were prompted by reading public material from Huntress (managed
+EDR, ITDR and SIEM for small businesses), the Software Analyst Cyber Research report on AI SOC for MDR (as
+promoted by Swimlane) and Tenable (exposure management). Those companies are credited as sources only; they
+are not affiliated with this repository, none of their text is copied, and none of their numbers are
+reused.
 
 ## Quick start
 
@@ -137,7 +153,7 @@ pinecrest-travel-d20         holdout  D20 08:00  yes       60.0      INC-PI-036 
 | Synthetic tenants, KQL engine, 12 rules, coverage | Terraform and Bicep stacks (validated, mocked tests) | Kusto emulator cross-check of the rules |
 | Triage, routing, investigation, narrative on a mock model | Foundry chat client (`AISOC_LLM=foundry`) | Foundry evaluations and red teaming on a real model |
 | Approvals, dry-run executor, audit chain | Prompt Shields adapter (request builder only) | Live Graph and Defender executor |
-| Feedback loop, risk watch list, isolation checks | Gated deploy and teardown workflows | Shadow-mode switch, SLA reports, hosted Sentinel MCP connection |
+| Feedback loop, risk watch list, isolation checks; identity and endpoint packs, consensus gate, authority registry, tiers, monthly report previews | Gated deploy and teardown workflows | Shadow-mode switch, report delivery, hosted Sentinel MCP connection |
 
 The full list is in [docs/best-practices.md](docs/best-practices.md).
 
@@ -147,17 +163,18 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
 |---|---|
 | `src/aisoc/` | Agents, workflow, gateway, MCP server, metrics, CLI |
 | `detections/` | KQL rules, metadata, the generated `rules.json`, and Sigma rules with their OCSF mapping and fixtures |
-| `config/` | Tenants, identities, templates, actions, thresholds, ATT&CK priorities |
+| `config/` | Tenants, identities, templates, actions, thresholds, ATT&CK priorities, authority, exposure, service tiers, filters |
 | `runbooks/` | One runbook per attack family |
 | `infra/` | Terraform and Bicep |
 | `docs/` | Architecture, threat model, scenario mapping, metrics, components, infra, guides, ADRs |
-| `tests/` | 488 tests |
+| `tests/` | 641 tests |
 
 ## Where to start
 
 - **Engineers:** [docs/architecture.md](docs/architecture.md), then the component docs in
   [docs/components/](docs/components/README.md) and [docs/threat-model.md](docs/threat-model.md).
-- **Recruiters and reviewers:** this page, [docs/metrics.md](docs/metrics.md),
+- **Recruiters and reviewers:** this page, [docs/USE_CASES.md](docs/USE_CASES.md),
+  [docs/PRESENTATION_GUIDE.md](docs/PRESENTATION_GUIDE.md), [docs/metrics.md](docs/metrics.md),
   [docs/cognitive-soc-five-parts.md](docs/cognitive-soc-five-parts.md) and
   [docs/best-practices.md](docs/best-practices.md).
 - **Adopters:** [docs/implementation-guide.md](docs/implementation-guide.md),
@@ -185,7 +202,8 @@ shipped) apply to this repository and are not repeated here.
 ## Open gaps
 
 - Rules use a simplified schema; they are created disabled and need the column mapping before real use.
-- Ten priority ATT&CK techniques have no detection, including T1486 (encryption for impact).
+- Ten priority ATT&CK techniques have no detection in the deployed rule set, including T1486 (encryption for
+  impact); the endpoint pack's canary rule covers it offline but is not in `rules.json` yet.
 - The live containment executor is deliberately not implemented; the IaC grants no containment permission.
 - Holdout gains are easier than real life (look-alikes repeat on a schedule); risk precursors were planted.
 - Nothing has been deployed, and the Foundry path has never been run.

@@ -17,7 +17,7 @@ flowchart LR
    through read-only tools, a cited timeline, a four-action plan waiting for the customer's approval.
 4. `aisoc injection`: a phishing subject tells the AI to close the case; quoting stops it, and with quoting
    off the validator catches it.
-5. `aisoc gate`: twelve checks that fail the build.
+5. `aisoc gate`: eighteen checks that fail the build.
 
 ## Likely questions
 
@@ -41,6 +41,17 @@ flowchart LR
 * Risk watch list: 7 of 9 story targets flagged the night before; precision 6.0% against 0.9% random, on
   planted precursors.
 * Canary: 139 sightings in its own tenant, 0 elsewhere; 8 of 8 crossings refused.
+
+## New capabilities in one line each
+
+* Identity pack: token replay, consent, device code, legacy auth and hidden inbox rules; 4 of 4 stories, one
+  named false positive (`aisoc itdr`).
+* Endpoint triage: process tree and persistence, macOS included; the signed look-alike is cleared with a
+  reason (`aisoc endpoint`).
+* Consensus gate: 0 false auto-reports against 9 for rule-only, at the cost of 8 true positives going to a
+  human (`aisoc consensus`).
+* Authority registry: post-action checks caught directory sync re-enabling an account (`aisoc authority`).
+* Exposure context reorders the queue and never changes a verdict (`aisoc exposure`).
 
 ## Things to say before being asked
 

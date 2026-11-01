@@ -1,0 +1,7 @@
+// Enrichment flag: a successful interactive sign-in from a hosting provider or a commercial anonymising
+// VPN, from an address that is not one of the tenant's own egress points. Low severity on its own; other
+// checks decide whether it matters (see the consensus gate).
+let Risky = dynamic(["hosting", "anonymous-vpn"]);
+SigninLogs
+| where ResultType == "0" and AsnCategory in (Risky) and KnownEgress == false
+| project TimeGenerated, UserPrincipalName, IPAddress, AutonomousSystemNumber, AsnCategory, EventId

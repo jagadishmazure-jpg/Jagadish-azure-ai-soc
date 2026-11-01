@@ -1,0 +1,6 @@
+// Device-code phishing: a successful device-code flow sign-in by an account that is not in the group of
+// shared meeting-room and kiosk devices that legitimately use it.
+SigninLogs
+| where ResultType == "0" and AuthenticationProtocol == "deviceCode"
+| where DeviceCodeAllowed == false
+| project TimeGenerated, UserPrincipalName, IPAddress, AppDisplayName, AsnCategory, EventId

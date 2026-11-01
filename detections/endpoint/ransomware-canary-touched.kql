@@ -1,0 +1,7 @@
+// Ransomware canary: a decoy file that no person or job should change is modified, renamed or deleted.
+// The backup agent only reads canaries, and reads are not in the action list.
+let Writes = dynamic(["FileModified", "FileRenamed", "FileDeleted"]);
+DeviceFileEvents
+| where IsCanary == true and ActionType in (Writes)
+| summarize Files = dcount(FileName), TimeGenerated = min(TimeGenerated), EventIds = make_set(EventId) by DeviceName, InitiatingProcessFileName
+| project TimeGenerated, DeviceName, InitiatingProcessFileName, Files, EventIds

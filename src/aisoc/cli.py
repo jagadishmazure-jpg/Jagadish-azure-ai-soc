@@ -24,6 +24,17 @@ aisoc iac --part P                    what the Terraform, Bicep, workflows and r
 aisoc sigma list|mapping|test         Sigma rules, the Sigma -> OCSF field map, fixture and backend parity results
 aisoc sigma convert --rule R --backend sql|kql
 aisoc mcp --tenant T | mcp-demo
+aisoc php2shell                       PHP2Shell case study (detect, triage, inventory, approval-gated plan)
+aisoc itdr                            identity threat pack: token replay, consent phishing, device code, legacy auth, inbox rules
+aisoc endpoint                        endpoint pack: process tree, persistence checks, RMM abuse, canaries, macOS story
+aisoc exposure [--tenant T]           exposure context in triage: criticality, known-exploited findings, attack paths
+aisoc consensus                       four-check gate before an incident is reported without an analyst reading it
+aisoc timeline [--incident ID]        incident timeline written only from the audit log
+aisoc search ["question"] [--confirm] plain-English search: shows the KQL, runs only on --confirm
+aisoc smart-filter                    log filtering cost simulation with a no-alert-lost replay
+aisoc tiers                           service tiers and SLA check per customer
+aisoc authority                       authority registry, post-action verification, undo, AI agent quarantine
+aisoc monthly-report --tenant T [--write]  monthly customer report preview (never sent)
 """
 
 from __future__ import annotations
@@ -36,7 +47,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from aisoc import DETECTIONS, attack, labels, metrics, pipeline
+from aisoc import DETECTIONS, ROOT, attack, labels, metrics, pipeline
 from aisoc.synth import rel
 
 
@@ -447,7 +458,25 @@ def gate_checks() -> list[tuple[str, bool, str]]:
         ),
         ("detections/rules.json is current", _rules_current(), "aisoc rules-json --check"),
         _sigma_check(),
+        *_pack_checks(),
     ]
+
+
+def _pack_checks() -> list[tuple[str, bool, str]]:
+    from aisoc import authority, consensus, endpoint, itdr, nlsearch, smartfilter
+
+    ep, it, co = endpoint.evaluate(), itdr.evaluate(), consensus.evaluate()
+    au, sf, nl = authority.evaluate(), smartfilter.evaluate(), nlsearch.evaluate()
+    return [
+        ("endpoint and identity packs detect every story", ep["stories_detected"] == "3/3" and it["stories_detected"] == "4/4",
+         f"endpoint {ep['stories_detected']}, identity {it['stories_detected']}"),
+        ("endpoint triage clears no attack", ep["attacks_cleared_as_benign"] == 0, f"{ep['triage_verdicts_correct']} verdicts correct"),
+        ("no false auto-report through the consensus gate", co["false_auto_reports"] == 0, f"{co['auto_reported']} auto-reported"),
+        ("no action at stage 4; undo restores state", au["actions_at_stage_4"] == 0 and au["undo_restores_exact_state"].split("/")[0] == au["undo_restores_exact_state"].split("/")[1],
+         f"undo {au['undo_restores_exact_state']}"),
+        ("log filters lose no alert", sf["alerts_lost_with_accepted_filters"] == 0, f"{len(sf['accepted'])} filter(s) accepted"),
+        ("plain-English search refuses every unsafe question", nl["refused_correctly"].split("/")[0] == nl["refused_correctly"].split("/")[1], nl["refused_correctly"]),
+    ]  # fmt: skip
 
 
 def _sigma_check() -> tuple[str, bool, str]:
@@ -604,6 +633,98 @@ def cmd_php2shell(a) -> int:
     return 0
 
 
+def cmd_itdr(a) -> int:
+    from aisoc import itdr
+
+    print(itdr.report())
+    return 0
+
+
+def cmd_endpoint(a) -> int:
+    from aisoc import endpoint
+
+    print(endpoint.report())
+    return 0
+
+
+def cmd_exposure(a) -> int:
+    from aisoc import exposure
+
+    print(exposure.report(a.tenant))
+    return 0
+
+
+def cmd_consensus(a) -> int:
+    from aisoc import consensus
+
+    print(consensus.report())
+    return 0
+
+
+def cmd_timeline(a) -> int:
+    from aisoc import timeline
+
+    print(timeline.report(a.incident))
+    return 0
+
+
+def cmd_search(a) -> int:
+    from aisoc import nlsearch
+    from aisoc.audit import AuditLog
+    from aisoc.store import load
+    from aisoc.tools import SentinelTools, ToolDenied
+
+    if not a.question:
+        print(nlsearch.report())
+        return 0
+    print(nlsearch.report(a.question))
+    t = nlsearch.translate(a.question)
+    if a.confirm and not t.refused:
+        store = load(a.tenant)
+        tools = SentinelTools(store, a.identity, AuditLog(a.tenant), store.now)
+        try:
+            rows = nlsearch.run(t, tools, confirm=True)
+        except ToolDenied as e:
+            print(f"denied: {e}")
+            return 1
+        print(f"ran as {a.identity}: {len(rows)} row(s)")
+        for r in rows[: a.limit]:
+            print("  " + ", ".join(f"{k}={v}" for k, v in r.items() if k != "TimeGenerated"))
+    return 0
+
+
+def cmd_smart_filter(a) -> int:
+    from aisoc import smartfilter
+
+    print(smartfilter.report())
+    return 0
+
+
+def cmd_tiers(a) -> int:
+    from aisoc import tiers
+
+    print(tiers.report())
+    return 0
+
+
+def cmd_authority(a) -> int:
+    from aisoc import authority
+
+    print(authority.report())
+    return 0
+
+
+def cmd_monthly_report(a) -> int:
+    from aisoc import monthly
+
+    r = monthly.build(a.tenant)
+    print(monthly.to_markdown(r))
+    if a.write:
+        for p in monthly.write(a.tenant):
+            print(f"preview written: {p.relative_to(ROOT)} (not sent)")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     _quiet()
     ap = argparse.ArgumentParser(prog="aisoc", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -612,6 +733,29 @@ def main(argv: list[str] | None = None) -> int:
     mode_kw = {"choices": ["baseline", "learning"], "default": "learning"}
     sub.add_parser("tenants").set_defaults(fn=cmd_tenants)
     sub.add_parser("php2shell", help="PHP2Shell case study: detect, triage, inventory, approval-gated plan").set_defaults(fn=cmd_php2shell)
+    sub.add_parser("itdr", help="identity threat pack: token theft, consent phishing, device code, legacy auth").set_defaults(fn=cmd_itdr)
+    sub.add_parser("endpoint", help="endpoint pack: process tree, persistence checks, macOS story").set_defaults(fn=cmd_endpoint)
+    sub.add_parser("consensus", help="four-check gate before auto-reporting").set_defaults(fn=cmd_consensus)
+    sub.add_parser("smart-filter", help="log filtering cost simulation with a no-alert-lost replay").set_defaults(fn=cmd_smart_filter)
+    sub.add_parser("tiers", help="service tiers and SLA check").set_defaults(fn=cmd_tiers)
+    sub.add_parser("authority", help="authority registry, verification and undo (simulated)").set_defaults(fn=cmd_authority)
+    p = sub.add_parser("exposure", help="exposure context in triage: criticality, known-exploited findings, attack paths")
+    p.add_argument("--tenant", default="brightwater", **tenant_kw)
+    p.set_defaults(fn=cmd_exposure)
+    p = sub.add_parser("timeline", help="incident timeline from the audit log")
+    p.add_argument("--incident", default="ITDR-001")
+    p.set_defaults(fn=cmd_timeline)
+    p = sub.add_parser("search", help="plain-English search; shows the query, runs on --confirm")
+    p.add_argument("question", nargs="?")
+    p.add_argument("--confirm", action="store_true")
+    p.add_argument("--tenant", default="brightwater", **tenant_kw)
+    p.add_argument("--identity", default="analyst.rivera")
+    p.add_argument("--limit", type=int, default=5)
+    p.set_defaults(fn=cmd_search)
+    p = sub.add_parser("monthly-report", help="monthly per-customer report preview (never sent)")
+    p.add_argument("--tenant", required=True, **tenant_kw)
+    p.add_argument("--write", action="store_true", help="also write out/monthly/<tenant>.md/.html/.csv")
+    p.set_defaults(fn=cmd_monthly_report)
     p = sub.add_parser("data")
     p.add_argument("--tenant", **tenant_kw)
     p.set_defaults(fn=cmd_data)

@@ -1,0 +1,30 @@
+# Log filtering candidates (synthetic). Each filter routes matching rows away from the analytics tier
+# (where detections run) to a cheaper archive tier that stays searchable for hunting and investigations.
+# A filter is accepted only if replaying every detection on the filtered data gives exactly the same
+# alerts as on the full data, for every tenant; otherwise aisoc.smartfilter rejects it and says which
+# alerts it would have lost.
+# Prices are ASSUMPTIONS for the cost model, per GB ingested, not quotes; check current pricing.
+assumed_price_per_gb:
+  analytics: 4.30
+  archive: 0.15
+scale_to_month_days: 30
+bytes_overhead_per_row: 350   # assumed per-row overhead on top of the JSON size of the synthetic row
+# Planted canaries: known-bad rows that a filter must never hide, even if today's detections would not
+# miss them (the data only contains the attacks someone thought to simulate).
+canaries:
+  - { table: DeviceNetworkEvents, why: "browser-delivered beacon to a threat-intel address", row: { InitiatingProcessFileName: msedge.exe, RemotePort: 443, RemoteIP: 203.0.113.140 } }
+  - { table: EmailEvents, why: "internal account sending mail after takeover (no link, no verdict yet)", row: { ThreatTypes: "", Url: "", Subject: "Updated bank details" } }
+  - { table: DeviceProcessEvents, why: "Office app launched by a script, not by a person", row: { InitiatingProcessFileName: wscript.exe, FileName: excel.exe } }
+filters:
+  - id: office-apps-from-explorer
+    table: DeviceProcessEvents
+    why: "a person opening Teams, Edge, Excel or Outlook from the desktop; no detection reads these"
+    match: { InitiatingProcessFileName: [explorer.exe], FileName: [teams.exe, msedge.exe, excel.exe, outlook.exe] }
+  - id: internal-mail-no-url-no-threat
+    table: EmailEvents
+    why: "internal mail with no link and no threat verdict"
+    match: { ThreatTypes: [""], Url: [""] }
+  - id: browser-https
+    table: DeviceNetworkEvents
+    why: "browser traffic on port 443 is most of the network table"
+    match: { InitiatingProcessFileName: [msedge.exe], RemotePort: [443] }

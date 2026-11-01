@@ -1,0 +1,6 @@
+// macOS autostart: a LaunchAgent or LaunchDaemon property list written by a process that is not signed
+// by a trusted developer team (for example an installer run from Downloads or /tmp).
+DeviceFileEvents
+| where ActionType == "FileCreated" and (FolderPath contains "/Library/LaunchAgents/" or FolderPath contains "/Library/LaunchDaemons/")
+| where InitiatingProcessTrusted == false
+| project TimeGenerated, DeviceName, FolderPath, FileName, InitiatingProcessFileName, InitiatingProcessFolderPath, EventId

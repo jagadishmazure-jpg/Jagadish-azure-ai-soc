@@ -31,16 +31,16 @@ flowchart LR
 | Area | Built | Written, not run | Planned |
 |---|---|---|---|
 | Data | Synthetic tenants and stories | | Replay of real, anonymised incidents |
-| Detection | 12 KQL rules, product alerts, coverage 11/21; 19 Sigma rules with OCSF mapping, fixtures and SQL / KQL parity | Sentinel rules in Terraform and Bicep (disabled) | Kusto emulator cross-check; rules for T1486 and nine other gaps; automated hunting |
-| Triage and routing | Dedupe, correlation, scoring, tiers | | Learned weights |
-| Investigation | Template pivots, timeline, scope | | Wider dynamic lookback |
+| Detection | Identity pack (6 rules) and endpoint pack (4 rules, Windows and macOS) on their own synthetic data, not in rules.json; 12 KQL rules, product alerts, coverage 11/21; 19 Sigma rules with OCSF mapping, fixtures and SQL / KQL parity | Sentinel rules in Terraform and Bicep (disabled) | Kusto emulator cross-check; rules for T1486 and nine other gaps; automated hunting |
+| Triage and routing | Dedupe, correlation, scoring, tiers; exposure context in the queue; consensus gate before auto-report | | Learned weights |
+| Investigation | Template pivots, timeline, scope; audit-chain timeline; plain-English search that shows KQL first | | Wider dynamic lookback; model-proposed templates from the allow-list |
 | Tools | Local gateway and MCP server | | Connection to the hosted Sentinel MCP server |
 | Model | MAF agent on a deterministic mock | Foundry client (`AISOC_LLM=foundry`) | Foundry evaluations and red teaming on a real model |
 | Guardrails | Regex screen and redaction, pseudonyms, validator | Prompt Shields adapter (request builder) | Azure AI Language PII detection |
-| Containment | Plans, approvals, dry-run executor, audit | | Live executor for Graph and Defender |
+| Containment | Plans, approvals, dry-run executor, audit; authority registry with post-action verification, undo and AI-agent quarantine (simulated state) | | Live executor for Graph and Defender |
 | Feedback | Notes, priors, gated thresholds | | Scheduled re-tuning; semantic note search |
 | Risk | Watch list on planted precursors | | Calibration on real history |
-| MSSP | Per-tenant isolation with tests | Lighthouse mapping (docs only) | SLA reports per customer |
+| MSSP | Per-tenant isolation with tests; three service tiers with SLA checks; monthly report preview files; log-filter cost model at assumed prices | Lighthouse mapping (docs only) | Report delivery behind approval |
 | Infra | Terraform and Bicep validated, tested with mocks, checkov clean | Deploy and teardown workflows (gated off) | Data connectors, agent endpoint, Foundry project in IaC |
 | Rollout | Baseline vs learning comparison | | Shadow-mode switch |
 
