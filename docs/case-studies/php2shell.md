@@ -33,7 +33,7 @@ upload, and, if it works, download a program into `/tmp`, run it, and have it ca
 
 That pattern is what a security operations centre can see, even without knowing the bug's internals.
 
-## 3. Timeline (public reporting)
+## 3. Timeline
 
 | When | What |
 |---|---|
@@ -197,11 +197,3 @@ queue directory.
 | Rules deployed to Microsoft Sentinel | Planned |
 | Real web application firewall or endpoint data | Planned |
 | A rule for web workers starting shells or downloaders | Planned |
-
-## 10. References
-
-* SecurityWeek, "Mirai Botnet Operators Join PHP2Shell Attacks as ASLR Bypass Exploits Emerge", October 23, 2026: https://www.securityweek.com/mirai-botnet-operators-join-php2shell-attacks-as-aslr-bypass-exploits-emerge/
-* Sophos, "Proof-of-concept exploit released for PHP vulnerabilities (CVE-2026-109618, CVE-2026-109619)", updated October 21 to 23, 2026: https://www.sophos.com/en-us/blog/proof-of-concept-exploit-released-for-php-vulnerabilities-109618-109619
-* CISA, "Critical Vulnerabilities in PHP Require Immediate Patching", October 21, 2026: https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching
-* NPR, coverage of the PHP flaws, October 23, 2026: https://www.npr.org/2026/10/23/g-s1-149503/hacking-php-flaws
-* AP, coverage of the PHP vulnerability and European takedowns, October 2026: https://apnews.com/article/php-websites-fbi-europe-vulnerability-a0af9576808a0963efca8df14d4b5183
