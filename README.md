@@ -46,7 +46,7 @@
 - **Running the service:** [three tiers with SLA checks, a log-filter cost model and monthly client report
   previews](docs/components/service-operations.md) (assumed prices; nothing is sent), an audit-chain
   incident timeline and a plain-English search that shows the KQL before running it.
-- **641 automated tests**, all offline, plus an eighteen-check release gate and docs whose outputs and code
+- **640 automated tests**, all offline, plus an eighteen-check release gate and docs whose outputs and code
   excerpts are regenerated and drift-checked in CI.
 
 **Skills demonstrated:** security operations (triage, investigation, containment, detection engineering),
@@ -149,7 +149,7 @@ The full list is in [docs/best-practices.md](docs/best-practices.md).
 | `runbooks/` | One runbook per attack family |
 | `infra/` | Terraform and Bicep |
 | `docs/` | Architecture, threat model, scenario mapping, metrics, components, infra, guides, ADRs |
-| `tests/` | 641 tests |
+| `tests/` | 640 tests |
 
 ## Where to start
 
