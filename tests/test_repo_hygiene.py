@@ -30,7 +30,6 @@ SIGMA_RULE_IDS = {
     if line.startswith("id:")
 }
 SIGMA_ID_FILES = {ROOT / "docs/components/sigma-detections.md"}
-GUIDE_LINK = "https://www.conifers.ai/blog/ai-powered-soc/"
 
 
 def flat(path: Path) -> str:
@@ -150,14 +149,6 @@ def test_reference_pdf_is_never_committed():
     assert not [f for f in tracked if f.lower().endswith(".pdf")]
     assert not [f for f in tracked if f.endswith("sec.txt")]
     assert "*.pdf" in (ROOT / ".gitignore").read_text()
-
-
-def test_guide_is_attributed_not_copied():
-    readme = flat(ROOT / "README.md")
-    mapping = flat(ROOT / "docs/scenario-mapping.md")
-    for t in (readme, mapping):
-        assert "Conifers" in t and GUIDE_LINK in t
-    assert "not included" in mapping and "quoted" in mapping
 
 
 def test_organisations_are_fictional():

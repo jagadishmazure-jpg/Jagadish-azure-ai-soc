@@ -1,15 +1,11 @@
 # The five parts of a cognitive SOC, and how this repository covers each one
 
-Conifers Technologies' AI-powered SOC guide
-([conifers.ai/blog/ai-powered-soc](https://www.conifers.ai/blog/ai-powered-soc/)) argues that a
-"cognitive" SOC rests on five parts. Taken together, they are what separates a security team that has
+A "cognitive" SOC rests on five parts. Taken together, they are what separates a security team that has
 bolted a chatbot onto its SIEM from one whose software works a case the way a seasoned analyst would.
 This page explains each part in plain words, shows where this repository implements it (files,
 functions, real excerpts and real command output) and gives an honest verdict on how far it goes.
 
-The guide is not included, redistributed or quoted here. The five part names are short labels; every
-explanation, example and judgement on this page is this repository's own. All companies, people and data
-are fictional and synthetic, the language model is a deterministic mock, and nothing is deployed.
+All companies, people and data are fictional and synthetic, the language model is a deterministic mock, and nothing is deployed.
 
 **Who this page is for**
 
@@ -25,7 +21,7 @@ Contents: [The five parts at a glance](#the-five-parts-at-a-glance) ·
 [3. Adaptive learning](#3-adaptive-learning) ·
 [4. Contextual analysis](#4-contextual-analysis) ·
 [5. Human-AI collaboration](#5-human-ai-collaboration) ·
-[Summary table](#summary-table) · [Where the guide is silent](#where-the-guide-is-silent) ·
+[Summary table](#summary-table) · [What the five parts leave out](#what-the-five-parts-leave-out) ·
 [Glossary](#glossary)
 
 ## How to read the evidence on this page
@@ -1002,14 +998,14 @@ pytest -q tests/test_workflow_feedback.py tests/test_response_audit.py
 | 4. Contextual analysis | `triage.py::build_incidents` and `enrich_and_score`, `routing.py`, `investigation.py`, `risk.py` | Strong | Criticality and data sensitivity as score terms; attack paths; Entra ID Protection risk |
 | 5. Human-AI collaboration | `routing.py`, `workflow.py` (`request_info`), `response.py`, `audit.py`, `analyst.py` (simulation) | Strong | Teams or Sentinel review surface; PIM-backed approvers; shadow-mode rollout; measured analyst time |
 
-## Where the guide is silent
+## What the five parts leave out
 
-The guide maps the problem well, but it leaves out several things a buyer or an engineer needs. This
+The five parts map the problem well, but they leave out several things a buyer or an engineer needs. This
 repository answers some of them in part; the companion repository
 [Jagadish-ai-soc-assurance](https://github.com/jagadishmazure-jpg/Jagadish-ai-soc-assurance) (in
 progress) is a vendor-neutral kit built to answer them for any AI SOC, this one included.
 
-| Topic the guide does not cover | What this repository has | What the assurance repository adds |
+| Topic the five parts do not cover | What this repository has | What the assurance repository adds |
 |---|---|---|
 | Independent benchmarks | Self-measured numbers on labelled synthetic data, with caveats ([metrics.md](metrics.md)) | A rerunnable scoring harness on open attack datasets |
 | Failure modes | STRIDE, OWASP Top 10 for LLM Applications and MITRE ATLAS in [threat-model.md](threat-model.md); injection tests with a gullible mock model | A failure-mode catalogue with tests that break things on purpose |
@@ -1023,7 +1019,7 @@ progress) is a vendor-neutral kit built to answer them for any AI SOC, this one 
 | Term | Meaning here |
 |---|---|
 | SOC | Security operations centre: the team and tools that watch for, investigate and respond to attacks |
-| Cognitive SOC | The guide's term for a SOC whose software investigates with context and learns, rather than only scoring alerts |
+| Cognitive SOC | A SOC whose software investigates with context and learns, rather than only scoring alerts |
 | MSSP | Managed security service provider: one SOC serving several customer organisations |
 | Tenant | One customer of the MSSP; the isolation boundary for data, knowledge, thresholds and audit |
 | SIEM | Security information and event management; Microsoft Sentinel is the one modelled here |

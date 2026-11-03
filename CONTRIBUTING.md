@@ -26,8 +26,8 @@ any hand-written number that quotes them.
 - Fictional organisations and synthetic data only: `.example` domains, documentation IP ranges
   (RFC 5737), mock workspace IDs starting with `00000000-`. No real people, customers or indicators.
 - Never commit third-party documents. `*.pdf` is ignored and a test checks that no PDF is tracked.
-  Paraphrase and attribute; run `python scripts/overlap_check.py <reference text>` on new prose and expect
-  zero shared eight-word sequences.
+  Run `python scripts/overlap_check.py <reference text>` on new prose and expect zero shared eight-word
+  sequences.
 - Product code must not import `aisoc.labels`, `aisoc.analyst` or `aisoc.metrics`.
 - No dates, years or month names in markdown, and no placeholder words; component and infra docs need all
   16 sections. `tests/test_repo_hygiene.py` checks these.

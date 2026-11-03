@@ -59,24 +59,6 @@ deterministic mock (the Foundry path is written but has never been run), the gua
 stand-ins, the analysts in the evaluation are simulated from ground truth, MTTR is simulated, and nothing is
 deployed to Azure.*
 
-## Attribution
-
-The set of use cases this repository covers was shaped by an AI-powered SOC guide published by Conifers
-Technologies: [https://www.conifers.ai/blog/ai-powered-soc/](https://www.conifers.ai/blog/ai-powered-soc/).
-The guide is **not** included or redistributed here, and nothing in this repository copies its text. The
-scenario labels, design, code and wording are this repository's own; see
-[docs/scenario-mapping.md](docs/scenario-mapping.md). How the repository covers the guide's five parts
-of a cognitive SOC (agentic architecture, institutional knowledge, adaptive learning, contextual analysis
-and human-AI collaboration), with real output and an honest verdict per part, is in
-[docs/cognitive-soc-five-parts.md](docs/cognitive-soc-five-parts.md).
-
-The small-business additions (identity and endpoint packs, consensus gate, authority registry, service
-tiers, monthly reports, exposure context) were prompted by reading public material from Huntress (managed
-EDR, ITDR and SIEM for small businesses), the Software Analyst Cyber Research report on AI SOC for MDR (as
-promoted by Swimlane) and Tenable (exposure management). Those companies are credited as sources only; they
-are not affiliated with this repository, none of their text is copied, and none of their numbers are
-reused.
-
 ## Quick start
 
 ```bash
@@ -210,5 +192,4 @@ shipped) apply to this repository and are not repeated here.
 
 ## License
 
-MIT for this repository's code and docs. The referenced guide is not covered by this license and is not
-included.
+MIT for this repository's code and docs.

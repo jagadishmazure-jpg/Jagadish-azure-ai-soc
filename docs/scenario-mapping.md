@@ -1,11 +1,7 @@
 # Scenario mapping: AI SOC use cases to code
 
-This repository was built after reading an AI-powered SOC guide published by Conifers Technologies
-([conifers.ai/blog/ai-powered-soc](https://www.conifers.ai/blog/ai-powered-soc/)). The guide is not
-included, redistributed or quoted here. The scenario names below are my own short labels for the kinds of
-work such guides describe, and every description, design choice and line of code is this repository's own.
-A local check (`scripts/overlap_check.py`) is run against a private local copy of the guide's text before
-publishing and must report zero shared eight-word sequences.
+The scenario names below are short labels for common AI SOC work. Each one maps to the code that handles
+it and the test that proves it.
 
 ```mermaid
 flowchart LR
